@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeRecall Sync</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header with Enable/Disable Toggle -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+        </div>
+        <h1>CodeRecall</h1>
+      </div>
+
+      <!-- Enable / Disable Switch -->
+      <div class="toggle-container">
+        <label class="switch" title="Toggle extension on/off">
+          <input type="checkbox" id="toggle-enable" checked>
+          <span class="slider"></span>
+        </label>
+        <span id="toggle-label" class="toggle-label">Active</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Account Card with Logout / Switch Account -->
+      <div id="auth-card" class="card auth-card">
+        <div class="auth-row">
+          <div class="user-meta">
+            <div class="avatar-placeholder">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div>
+              <div id="username-display" class="username">Detecting...</div>
+              <span id="session-badge" class="badge neutral">Checking</span>
+            </div>
+          </div>
+
+          <!-- Logout / Switch Account Action -->
+          <div id="user-actions" class="user-actions">
+            <button id="btn-logout" class="btn-link" title="Log out or switch LeetCode account">
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div id="login-prompt" class="login-prompt hidden">
+          <p>Not signed in on leetcode.com</p>
+          <a id="btn-login" href="https://leetcode.com/accounts/login/" target="_blank" class="btn btn-secondary btn-sm">
+            Sign In on LeetCode
+          </a>
+        </div>
+      </div>
+
+      <!-- Sync Action -->
+      <div id="sync-container" class="sync-container">
+        <button id="btn-sync" class="btn btn-primary" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+          <span id="btn-sync-text">Sync Submissions</span>
+        </button>
+      </div>
+
+      <!-- Progress Section -->
+      <div id="progress-card" class="card progress-card hidden">
+        <div class="progress-bar-track">
+          <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+
+        <div id="progress-status-msg" class="progress-msg">
+          Syncing...
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="telemetry-item">
+            <span class="telemetry-num" id="stat-processed">0</span>
+            <span class="telemetry-lbl">Processed</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-num text-emerald" id="stat-saved">0</span>
+            <span class="telemetry-lbl">New Added</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-num text-indigo" id="stat-skipped">0</span>
+            <span class="telemetry-lbl">Skipped</span>
+          </div>
+        </div>
+
+        <div id="post-sync-actions" class="post-sync-actions hidden">
+          <button id="btn-open-dashboard" class="btn btn-success btn-sm">
+            Open Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Card -->
+      <div id="error-card" class="card error-card hidden">
+        <div class="error-header">
+          <span id="error-message" class="error-msg">Sync interrupted.</span>
+        </div>
+        <button id="btn-retry" class="btn btn-secondary btn-sm">Retry</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
