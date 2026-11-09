@@ -5,7 +5,7 @@ chrome.runtime.onInstalled.addListener(() => {
   // Initialize default configuration
   chrome.storage.local.get(["backendUrl"], (result) => {
     if (!result.backendUrl) {
-      chrome.storage.local.set({ backendUrl: "const DEFAULT_BACKEND = "https://your-project.vercel.app";" });
+      chrome.storage.local.set({ backendUrl: "http://localhost:3000" });
     }
   });
 });
