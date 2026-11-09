@@ -15,11 +15,7 @@ export default async function SyncPage({ searchParams }: SyncPageProps) {
         where: { username: targetUser },
         include: { syncCheckpoint: true },
       })
-    : await prisma.user.findFirst({
-        where: { submissions: { some: {} } },
-        include: { syncCheckpoint: true },
-        orderBy: { lastSyncedAt: "desc" },
-      });
+    : null;
 
   const allUsersRaw = await prisma.user.findMany({
     select: { id: true, username: true, lastSyncedAt: true },

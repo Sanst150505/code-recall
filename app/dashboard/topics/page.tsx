@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Header } from "@/components/Header";
 import { TopicsTable } from "@/components/TopicsTable";
 import {
@@ -14,6 +15,37 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
   const resolvedParams = await searchParams;
   const usernameParam = resolvedParams.user?.trim();
   const summary = await calculateHistoricalAnalytics(usernameParam);
+
+  if (summary.totalSubmissions === 0) {
+    return (
+      <>
+        <Header
+          title="My Progress"
+          description="Detailed competency matrix and difficulty breakdown across 88 topics."
+          username={summary.username}
+          lastSyncedAt={null}
+        />
+        <main className="p-6 sm:p-8 max-w-4xl mx-auto w-full">
+          <div className="p-10 rounded-2xl bg-white border border-slate-200 text-center space-y-3">
+            <h3 className="text-base font-bold text-slate-900">
+              {usernameParam ? `No submissions found for "${usernameParam}"` : "No profile selected"}
+            </h3>
+            <p className="text-xs text-slate-600 max-w-md mx-auto">
+              Please connect your LeetCode account with the CodeRecall Chrome extension or select a profile on the home dashboard.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 transition"
+              >
+                &larr; Choose or Connect Profile
+              </Link>
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   // Aggregate top 7 topics for the bar chart
   const topTopicsData = summary.topics

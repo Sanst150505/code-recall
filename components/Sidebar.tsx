@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   BrainCircuit,
@@ -10,6 +10,8 @@ import {
   RefreshCw,
   ExternalLink,
   Users,
+  LogOut,
+  UserPlus,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -17,11 +19,18 @@ interface SidebarProps {
   isInitialSyncComplete?: boolean;
 }
 
-export function Sidebar({ username = "anonymous" }: SidebarProps) {
+export function Sidebar({ username = "" }: SidebarProps) {
+  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const userParam = searchParams.get("user");
-  const activeUser = userParam || username;
+  const userParam = searchParams.get("user")?.trim();
+
+  const handleClearUser = () => {
+    try {
+      localStorage.removeItem("code_recall_active_user");
+    } catch {}
+    router.push("/dashboard");
+  };
 
   const buildHref = (path: string) => {
     return userParam ? `${path}?user=${encodeURIComponent(userParam)}` : path;
@@ -95,38 +104,53 @@ export function Sidebar({ username = "anonymous" }: SidebarProps) {
 
       {/* User Info Footer */}
       <div className="p-3 border-t border-slate-800/80">
-        <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/80">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-slate-200 text-xs">
-              {activeUser.charAt(0).toUpperCase()}
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-slate-200 truncate">{activeUser}</p>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                <span className="text-[10px] text-slate-400">LeetCode</span>
+        {userParam ? (
+          <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/80">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded-full bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center font-bold text-indigo-300 text-xs">
+                {userParam.charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-slate-200 truncate">{userParam}</p>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span className="text-[10px] text-slate-400">LeetCode</span>
+                </div>
               </div>
             </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={handleClearUser}
+                title="Switch or disconnect profile"
+                className="text-slate-500 hover:text-rose-400 p-1 rounded transition cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+              <a
+                href={`https://leetcode.com/${userParam}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Open LeetCode Profile"
+                className="text-slate-500 hover:text-slate-300 p-1 rounded transition"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Link
-              href={buildHref("/dashboard/sync")}
-              title="Switch or manage accounts"
-              className="text-slate-500 hover:text-indigo-400 p-1 rounded transition"
-            >
-              <Users className="w-3.5 h-3.5" />
-            </Link>
-            <a
-              href={`https://leetcode.com/${activeUser}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open LeetCode Profile"
-              className="text-slate-500 hover:text-slate-300 p-1 rounded transition"
-            >
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          </div>
-        </div>
+        ) : (
+          <Link
+            href="/dashboard/sync"
+            className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-900/60 border border-dashed border-slate-700 hover:border-indigo-500/80 transition group"
+          >
+            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 text-xs">
+              <UserPlus className="w-3.5 h-3.5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition">No Profile Active</p>
+              <span className="text-[10px] text-indigo-400 font-medium">Select or Sync &rarr;</span>
+            </div>
+          </Link>
+        )}
       </div>
     </aside>
   );

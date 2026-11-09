@@ -77,29 +77,17 @@ export async function calculateHistoricalAnalytics(
   nowReference: Date = new Date()
 ): Promise<OverallAnalyticsSummary> {
   // 1. Locate the user
-  let user;
+  let user = null;
   if (targetUsername && targetUsername.trim() !== "") {
     user = await prisma.user.findUnique({
       where: { username: targetUsername.trim() },
     });
-  } else {
-    // Prefer user with existing submissions, or most recently synced
-    user = await prisma.user.findFirst({
-      where: { submissions: { some: {} } },
-      orderBy: { lastSyncedAt: "desc" },
-    });
-
-    if (!user) {
-      user = await prisma.user.findFirst({
-        orderBy: { lastSyncedAt: "desc" },
-      });
-    }
   }
 
   if (!user) {
-    // If no user exists yet, return an empty analytics structure
+    // If no user was requested or user does not exist, return an empty analytics structure
     return {
-      username: targetUsername || "anonymous",
+      username: targetUsername || "",
       totalSubmissions: 0,
       totalUniqueProblemsAttempted: 0,
       totalUniqueProblemsSolved: 0,

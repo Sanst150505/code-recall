@@ -320,8 +320,10 @@ export function SubmissionHistoryTable() {
 
               {!loading && submissions.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-xs text-slate-400">
-                    No submissions found matching your active filter criteria.
+                  <td colSpan={8} className="py-12 text-center text-xs text-slate-500">
+                    {!userParam
+                      ? "No profile active. Please select a profile from Home or sync with the CodeRecall extension."
+                      : "No submissions found matching your active filter criteria."}
                   </td>
                 </tr>
               )}

@@ -17,6 +17,12 @@ export async function GET(request: NextRequest) {
 
     if (username) {
       where.user = { username };
+    } else {
+      // Require username so anonymous requests do not expose other users' submission logs
+      return NextResponse.json({
+        submissions: [],
+        pagination: { page, pageSize, total: 0, totalPages: 0 },
+      });
     }
 
     if (status) {
