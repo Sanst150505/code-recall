@@ -14,7 +14,7 @@ interface HeaderProps {
 export function Header({
   title,
   description,
-  username = "sannidhya1505",
+  username = "anonymous",
   lastSyncedAt,
   onSyncComplete,
 }: HeaderProps) {

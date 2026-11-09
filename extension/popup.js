@@ -1,7 +1,7 @@
 // CodeRecall Chrome Extension - Clean Popup Controller
 
 const LEETCODE_API = "https://leetcode.com/graphql";
-const DEFAULT_BACKEND = "http://localhost:3000";
+const DEFAULT_BACKEND = "https://code-recall-pryt.vercel.app";
 
 // DOM Elements
 const toggleEnable = document.getElementById("toggle-enable");
@@ -10,6 +10,7 @@ const sessionBadge = document.getElementById("session-badge");
 const usernameDisplay = document.getElementById("username-display");
 const loginPrompt = document.getElementById("login-prompt");
 const btnLogout = document.getElementById("btn-logout");
+const btnQuickDashboard = document.getElementById("btn-quick-dashboard");
 const btnSync = document.getElementById("btn-sync");
 const btnSyncText = document.getElementById("btn-sync-text");
 const progressCard = document.getElementById("progress-card");
@@ -45,12 +46,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadState() {
   return new Promise((resolve) => {
     chrome.storage.local.get(["backendUrl", "extensionEnabled"], (result) => {
-      backendUrl = result.backendUrl || DEFAULT_BACKEND;
+      backendUrl = (result.backendUrl && result.backendUrl !== "http://localhost:3000")
+        ? result.backendUrl
+        : DEFAULT_BACKEND;
+      if (result.backendUrl === "http://localhost:3000") {
+        chrome.storage.local.set({ backendUrl: DEFAULT_BACKEND });
+      }
       isEnabled = result.extensionEnabled !== undefined ? result.extensionEnabled : true;
       toggleEnable.checked = isEnabled;
       resolve();
     });
   });
+}
+
+function openUserDashboard() {
+  const targetUrl = currentUser?.username
+    ? `${backendUrl}/dashboard?user=${encodeURIComponent(currentUser.username)}`
+    : `${backendUrl}/dashboard`;
+  chrome.tabs.create({ url: targetUrl });
 }
 
 function setupEventListeners() {
@@ -95,9 +108,10 @@ function setupEventListeners() {
     }
   });
 
-  btnOpenDashboard.addEventListener("click", () => {
-    chrome.tabs.create({ url: `${backendUrl}/dashboard` });
-  });
+  btnOpenDashboard.addEventListener("click", openUserDashboard);
+  if (btnQuickDashboard) {
+    btnQuickDashboard.addEventListener("click", openUserDashboard);
+  }
 }
 
 function updateToggleUI(enabled) {
@@ -279,7 +293,7 @@ async function startHistoricalSync() {
           }),
         });
       } catch (networkErr) {
-        throw new Error("Cannot reach CodeRecall backend at localhost:3000. Please start your web app (`npm run dev`).");
+        throw new Error(`Cannot reach CodeRecall backend at ${backendUrl}. Check your internet connection or backend status.`);
       }
 
       const importResult = await importResponse.json().catch(() => null);

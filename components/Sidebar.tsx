@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   LayoutDashboard,
   BrainCircuit,
@@ -17,8 +17,15 @@ interface SidebarProps {
   isInitialSyncComplete?: boolean;
 }
 
-export function Sidebar({ username = "sannidhya1505" }: SidebarProps) {
+export function Sidebar({ username = "anonymous" }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const userParam = searchParams.get("user");
+  const activeUser = userParam || username;
+
+  const buildHref = (path: string) => {
+    return userParam ? `${path}?user=${encodeURIComponent(userParam)}` : path;
+  };
 
   const navItems = [
     {
@@ -71,7 +78,7 @@ export function Sidebar({ username = "sannidhya1505" }: SidebarProps) {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={buildHref(item.href)}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                   isActive
                     ? "bg-indigo-600 text-white"
@@ -91,10 +98,10 @@ export function Sidebar({ username = "sannidhya1505" }: SidebarProps) {
         <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/80">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-slate-200 text-xs">
-              {username.charAt(0).toUpperCase()}
+              {activeUser.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-slate-200 truncate">{username}</p>
+              <p className="text-xs font-medium text-slate-200 truncate">{activeUser}</p>
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                 <span className="text-[10px] text-slate-400">LeetCode</span>
@@ -103,14 +110,14 @@ export function Sidebar({ username = "sannidhya1505" }: SidebarProps) {
           </div>
           <div className="flex items-center gap-1">
             <Link
-              href="/dashboard/sync"
+              href={buildHref("/dashboard/sync")}
               title="Switch or manage accounts"
               className="text-slate-500 hover:text-indigo-400 p-1 rounded transition"
             >
               <Users className="w-3.5 h-3.5" />
             </Link>
             <a
-              href={`https://leetcode.com/${username}`}
+              href={`https://leetcode.com/${activeUser}`}
               target="_blank"
               rel="noopener noreferrer"
               title="Open LeetCode Profile"

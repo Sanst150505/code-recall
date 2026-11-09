@@ -2,8 +2,14 @@ import { Header } from "@/components/Header";
 import { RevisionCard } from "@/components/RevisionCard";
 import { calculateHistoricalAnalytics } from "@/lib/analytics-service";
 
-export default async function RevisionPage() {
-  const summary = await calculateHistoricalAnalytics();
+interface RevisionPageProps {
+  searchParams: Promise<{ user?: string }>;
+}
+
+export default async function RevisionPage({ searchParams }: RevisionPageProps) {
+  const resolvedParams = await searchParams;
+  const usernameParam = resolvedParams.user?.trim();
+  const summary = await calculateHistoricalAnalytics(usernameParam);
 
   // Group topics by their category
   const criticalTopics = summary.topics.filter((t) => t.category === "CRITICAL_REVISION");
@@ -56,7 +62,12 @@ export default async function RevisionPage() {
           {criticalTopics.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {criticalTopics.map((item, idx) => (
-                <RevisionCard key={item.topic} item={item} rank={idx + 1} />
+                <RevisionCard
+                  key={item.topic}
+                  item={item}
+                  rank={idx + 1}
+                  username={summary.username}
+                />
               ))}
             </div>
           ) : (
@@ -80,7 +91,12 @@ export default async function RevisionPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {deficitTopics.slice(0, 9).map((item, idx) => (
-              <RevisionCard key={item.topic} item={item} rank={idx + 1} />
+              <RevisionCard
+                key={item.topic}
+                item={item}
+                rank={idx + 1}
+                username={summary.username}
+              />
             ))}
           </div>
         </section>
@@ -100,7 +116,12 @@ export default async function RevisionPage() {
           {frictionTopics.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {frictionTopics.map((item, idx) => (
-                <RevisionCard key={item.topic} item={item} rank={idx + 1} />
+                <RevisionCard
+                  key={item.topic}
+                  item={item}
+                  rank={idx + 1}
+                  username={summary.username}
+                />
               ))}
             </div>
           ) : (
@@ -124,7 +145,12 @@ export default async function RevisionPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {maintainedTopics.slice(0, 6).map((item, idx) => (
-              <RevisionCard key={item.topic} item={item} rank={idx + 1} />
+              <RevisionCard
+                key={item.topic}
+                item={item}
+                rank={idx + 1}
+                username={summary.username}
+              />
             ))}
           </div>
         </section>

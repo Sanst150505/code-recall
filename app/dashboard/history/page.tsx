@@ -2,13 +2,20 @@ import { Suspense } from "react";
 import { Header } from "@/components/Header";
 import { SubmissionHistoryTable } from "@/components/SubmissionHistoryTable";
 
-export default function HistoryPage() {
+interface HistoryPageProps {
+  searchParams: Promise<{ user?: string }>;
+}
+
+export default async function HistoryPage({ searchParams }: HistoryPageProps) {
+  const resolvedParams = await searchParams;
+  const username = resolvedParams.user?.trim() || "anonymous";
+
   return (
     <>
       <Header
         title="History"
         description="All past submissions, runtimes, memory, and verdicts."
-        username="sannidhya1505"
+        username={username}
       />
 
       <main className="p-6 sm:p-8 max-w-6xl mx-auto w-full">

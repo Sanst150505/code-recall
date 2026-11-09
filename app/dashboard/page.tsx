@@ -13,8 +13,14 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-export default async function DashboardPage() {
-  const summary = await calculateHistoricalAnalytics();
+interface DashboardPageProps {
+  searchParams: Promise<{ user?: string }>;
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  const resolvedParams = await searchParams;
+  const usernameParam = resolvedParams.user?.trim();
+  const summary = await calculateHistoricalAnalytics(usernameParam);
 
   // Aggregate monthly submissions for the compact activity timeline
   const userSubmissions = await prisma.submission.findMany({
@@ -120,7 +126,11 @@ export default async function DashboardPage() {
               </p>
             </div>
             <Link
-              href="/dashboard/revision"
+              href={
+                usernameParam
+                  ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
+                  : "/dashboard/revision"
+              }
               className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
             >
               <span>View all recommendations</span>
@@ -130,7 +140,12 @@ export default async function DashboardPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {summary.topRevisionCandidates.slice(0, 3).map((item, idx) => (
-              <RevisionCard key={item.topic} item={item} rank={idx + 1} />
+              <RevisionCard
+                key={item.topic}
+                item={item}
+                rank={idx + 1}
+                username={summary.username}
+              />
             ))}
           </div>
         </section>

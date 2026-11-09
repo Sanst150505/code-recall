@@ -5,9 +5,10 @@ import { TopicAnalytics, RecommendationCategory } from "@/lib/analytics-service"
 interface RevisionCardProps {
   item: TopicAnalytics;
   rank?: number;
+  username?: string;
 }
 
-export function RevisionCard({ item, rank }: RevisionCardProps) {
+export function RevisionCard({ item, rank, username }: RevisionCardProps) {
   const categoryConfig: Record<
     RecommendationCategory,
     { label: string; bg: string; text: string; border: string; icon: any }
@@ -123,7 +124,11 @@ export function RevisionCard({ item, rank }: RevisionCardProps) {
         </span>
 
         <Link
-          href={`/dashboard/history?topic=${encodeURIComponent(item.topic)}`}
+          href={
+            username
+              ? `/dashboard/history?topic=${encodeURIComponent(item.topic)}&user=${encodeURIComponent(username)}`
+              : `/dashboard/history?topic=${encodeURIComponent(item.topic)}`
+          }
           className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition group"
         >
           <span>View practice history</span>

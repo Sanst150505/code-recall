@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   RefreshCw,
   CheckCircle2,
@@ -46,6 +47,7 @@ interface SyncStatusData {
 }
 
 export function SyncCenterView({ initialData }: { initialData: SyncStatusData }) {
+  const router = useRouter();
   const [data, setData] = useState<SyncStatusData>(initialData);
   const [isSyncing, setIsSyncing] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
@@ -92,6 +94,7 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
   const handleSwitchUser = async (targetUsername: string) => {
     try {
       setMessage({ type: "info", text: `Switching to ${targetUsername}...` });
+      router.push(`/dashboard/sync?user=${encodeURIComponent(targetUsername)}`);
       await refreshStatus(targetUsername);
       setMessage({ type: "success", text: `Switched active account to ${targetUsername}.` });
     } catch (err) {
@@ -130,6 +133,7 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
         text: `Connected "${trimmed}" successfully! Synced ${result.stats.submissionsProcessed} submissions.`,
       });
 
+      router.push(`/dashboard/sync?user=${encodeURIComponent(trimmed)}`);
       await refreshStatus(trimmed);
     } catch (err) {
       setMessage({

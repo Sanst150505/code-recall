@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Search,
   Filter,
@@ -20,6 +21,8 @@ interface TopicsTableProps {
 }
 
 export function TopicsTable({ initialTopics }: TopicsTableProps) {
+  const searchParams = useSearchParams();
+  const userParam = searchParams.get("user");
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
   const [sortBy, setSortBy] = useState<"priority" | "solved" | "struggle" | "recency" | "alphabetical">("priority");
@@ -210,7 +213,11 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
 
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <Link
-                        href={`/dashboard/history?topic=${encodeURIComponent(t.topic)}`}
+                        href={
+                          userParam
+                            ? `/dashboard/history?topic=${encodeURIComponent(t.topic)}&user=${encodeURIComponent(userParam)}`
+                            : `/dashboard/history?topic=${encodeURIComponent(t.topic)}`
+                        }
                         className="text-indigo-600 hover:text-indigo-800 font-medium p-1.5 hover:bg-indigo-50 rounded-lg inline-flex items-center gap-1 transition"
                         title="View submissions for this topic"
                       >

@@ -6,8 +6,14 @@ import {
 } from "@/components/Charts";
 import { calculateHistoricalAnalytics } from "@/lib/analytics-service";
 
-export default async function TopicsPage() {
-  const summary = await calculateHistoricalAnalytics();
+interface TopicsPageProps {
+  searchParams: Promise<{ user?: string }>;
+}
+
+export default async function TopicsPage({ searchParams }: TopicsPageProps) {
+  const resolvedParams = await searchParams;
+  const usernameParam = resolvedParams.user?.trim();
+  const summary = await calculateHistoricalAnalytics(usernameParam);
 
   // Aggregate top 7 topics for the bar chart
   const topTopicsData = summary.topics

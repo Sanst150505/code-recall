@@ -40,6 +40,7 @@ interface PaginationInfo {
 export function SubmissionHistoryTable() {
   const searchParams = useSearchParams();
   const initialTopic = searchParams.get("topic") || "";
+  const userParam = searchParams.get("user") || "";
 
   const [submissions, setSubmissions] = useState<SubmissionRow[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
@@ -63,6 +64,7 @@ export function SubmissionHistoryTable() {
       const params = new URLSearchParams();
       params.set("page", page.toString());
       params.set("pageSize", "20");
+      if (userParam) params.set("username", userParam);
       if (search) params.set("search", search);
       if (status !== "All") params.set("status", status);
       if (difficulty !== "All") params.set("difficulty", difficulty);
@@ -79,7 +81,7 @@ export function SubmissionHistoryTable() {
     } finally {
       setLoading(false);
     }
-  }, [page, search, status, difficulty, topic]);
+  }, [page, search, status, difficulty, topic, userParam]);
 
   useEffect(() => {
     fetchSubmissions();

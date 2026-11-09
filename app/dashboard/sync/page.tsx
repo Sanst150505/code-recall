@@ -2,12 +2,35 @@ import { Header } from "@/components/Header";
 import { SyncCenterView } from "@/components/SyncCenterView";
 import { prisma } from "@/lib/prisma";
 
-export default async function SyncPage() {
-  const user = await prisma.user.findFirst({
-    where: { submissions: { some: {} } },
-    include: { syncCheckpoint: true },
+interface SyncPageProps {
+  searchParams: Promise<{ user?: string }>;
+}
+
+export default async function SyncPage({ searchParams }: SyncPageProps) {
+  const resolvedParams = await searchParams;
+  const targetUser = resolvedParams.user?.trim();
+
+  const user = targetUser
+    ? await prisma.user.findUnique({
+        where: { username: targetUser },
+        include: { syncCheckpoint: true },
+      })
+    : await prisma.user.findFirst({
+        where: { submissions: { some: {} } },
+        include: { syncCheckpoint: true },
+        orderBy: { lastSyncedAt: "desc" },
+      });
+
+  const allUsersRaw = await prisma.user.findMany({
+    select: { id: true, username: true, lastSyncedAt: true },
     orderBy: { lastSyncedAt: "desc" },
   });
+
+  const allUsers = allUsersRaw.map((u) => ({
+    id: u.id,
+    username: u.username,
+    lastSyncedAt: u.lastSyncedAt?.toISOString() ?? null,
+  }));
 
   const totalSubmissions = user ? await prisma.submission.count({ where: { userId: user.id } }) : 0;
   const totalProblems = await prisma.problem.count();
@@ -15,6 +38,7 @@ export default async function SyncPage() {
 
   const initialData = {
     hasUser: Boolean(user),
+    allUsers,
     user: user
       ? {
           id: user.id,
@@ -48,7 +72,7 @@ export default async function SyncPage() {
       <Header
         title="Profile & Connections"
         description="LeetCode account link, sync checkpoints, and extension status."
-        username={user?.username || "sannidhya1505"}
+        username={user?.username || targetUser || "anonymous"}
         lastSyncedAt={user?.lastSyncedAt?.toISOString() ?? null}
       />
 

@@ -9,9 +9,10 @@
   ],
   "host_permissions": [
     "https://leetcode.com/*",
+    "https://code-recall-pryt.vercel.app/*",
+    "https://*.vercel.app/*",
     "http://localhost:3000/*",
-    "http://127.0.0.1:3000/*",
-    "https://*.vercel.app/*"
+    "http://127.0.0.1:3000/*"
   ],
   "action": {
     "default_popup": "popup.html",
