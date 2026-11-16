@@ -31,14 +31,14 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
               {usernameParam ? `No submissions found for "${usernameParam}"` : "No profile selected"}
             </h3>
             <p className="text-xs text-slate-600 max-w-md mx-auto">
-              Please connect your LeetCode account with the CodeRecall Chrome extension or select a profile on the home dashboard.
+              Please sync your LeetCode account using the CodeRecall Chrome extension.
             </p>
             <div className="pt-2">
               <Link
                 href="/dashboard"
                 className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 transition"
               >
-                &larr; Choose or Connect Profile
+                &larr; Back to Home
               </Link>
             </div>
           </div>

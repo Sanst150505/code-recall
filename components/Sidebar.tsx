@@ -58,7 +58,7 @@ export function Sidebar({ username = "" }: SidebarProps) {
       icon: History,
     },
     {
-      label: "Profile & Connections",
+      label: "Extension Sync",
       href: "/dashboard/sync",
       icon: RefreshCw,
     },
@@ -121,7 +121,7 @@ export function Sidebar({ username = "" }: SidebarProps) {
             <div className="flex items-center gap-1">
               <button
                 onClick={handleClearUser}
-                title="Switch or disconnect profile"
+                title="Disconnect profile"
                 className="text-slate-500 hover:text-rose-400 p-1 rounded transition cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -147,7 +147,7 @@ export function Sidebar({ username = "" }: SidebarProps) {
             </div>
             <div className="min-w-0">
               <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition">No Profile Active</p>
-              <span className="text-[10px] text-indigo-400 font-medium">Select or Sync &rarr;</span>
+              <span className="text-[10px] text-indigo-400 font-medium">Sync with Extension &rarr;</span>
             </div>
           </Link>
         )}
