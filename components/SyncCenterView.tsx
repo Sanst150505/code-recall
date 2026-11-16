@@ -89,14 +89,20 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
               </div>
               <div className="flex items-center gap-3 mt-1.5">
                 <span className="text-base font-bold text-slate-900">{activeUsername}</span>
-                <a
-                  href={`https://leetcode.com/${activeUsername}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-indigo-600 hover:text-indigo-800 text-xs font-medium"
-                >
-                  View Profile
-                </a>
+                {activeUsername !== "demo" ? (
+                  <a
+                    href={`https://leetcode.com/${activeUsername}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-600 hover:text-indigo-800 text-xs font-medium"
+                  >
+                    View Profile
+                  </a>
+                ) : (
+                  <span className="text-xs text-slate-500 font-medium bg-slate-100 px-2 py-0.5 rounded-md">
+                    Demo Sandbox
+                  </span>
+                )}
               </div>
             </div>
 

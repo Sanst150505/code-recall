@@ -88,7 +88,9 @@ export function Sidebar({ username = "" }: SidebarProps) {
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-slate-200 truncate">{userParam}</p>
-                <p className="text-[10px] text-slate-400">LeetCode Connected</p>
+                <p className="text-[10px] text-slate-400">
+                  {userParam === "demo" ? "Sample Demo Profile" : "LeetCode Connected"}
+                </p>
               </div>
               <button
                 onClick={handleClearUser}
@@ -98,14 +100,20 @@ export function Sidebar({ username = "" }: SidebarProps) {
               </button>
             </div>
             <div className="mt-2 pt-2 border-t border-slate-800/60 text-right">
-              <a
-                href={`https://leetcode.com/${userParam}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[11px] text-indigo-400 hover:text-indigo-300 transition"
-              >
-                View LeetCode Profile
-              </a>
+              {userParam !== "demo" ? (
+                <a
+                  href={`https://leetcode.com/${userParam}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] text-indigo-400 hover:text-indigo-300 transition"
+                >
+                  View LeetCode Profile
+                </a>
+              ) : (
+                <span className="text-[10px] text-slate-500">
+                  Demo Sandbox Mode
+                </span>
+              )}
             </div>
           </div>
         ) : (

@@ -319,19 +319,6 @@ export async function calculateHistoricalAnalytics(
       frictionFactor = Math.min(100, Math.max(0, Math.round((struggleRatio - 1.0) * 40)));
     }
 
-    // Weighted Priority Score: 45% Decay + 35% Volume Deficit + 20% Friction
-    const priorityScore = Math.min(
-      100,
-      Math.max(
-        0,
-        Math.round(
-          0.45 * decayFactor +
-          0.35 * volumeDeficitFactor +
-          0.20 * frictionFactor
-        )
-      )
-    );
-
     // 5. Categorize Revision Recommendations with transparent explanations
     let category: RecommendationCategory = "ACTIVE_MAINTAINED";
     let explanation = "";
@@ -363,6 +350,28 @@ export async function calculateHistoricalAnalytics(
       explanation = `Practiced recently (${daysText} ago, ${acc.solvedW30.size} solved in the last 30 days). Skills are actively maintained.`;
       recommendedAction = `Maintain your current practice cadence; no urgent revision needed.`;
     }
+
+    // Weighted Priority Score: 45% Decay + 35% Volume Deficit + 20% Friction
+    // Mastered concepts facing critical decay receive an urgency boost
+    let categoryBonus = 0;
+    if (category === "CRITICAL_REVISION") {
+      categoryBonus = 25;
+    } else if (category === "HIGH_FRICTION") {
+      categoryBonus = 12;
+    }
+
+    const priorityScore = Math.min(
+      100,
+      Math.max(
+        0,
+        Math.round(
+          0.45 * decayFactor +
+          0.35 * volumeDeficitFactor +
+          0.20 * frictionFactor +
+          categoryBonus
+        )
+      )
+    );
 
     analyticsList.push({
       topic: acc.topic,
