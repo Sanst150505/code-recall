@@ -109,13 +109,22 @@ export function Sidebar({ username = "" }: SidebarProps) {
             </div>
           </div>
         ) : (
-          <Link
-            href="/dashboard/sync"
-            className="block p-2.5 rounded-lg bg-slate-900/60 border border-dashed border-slate-700 hover:border-slate-500 transition group text-center"
-          >
-            <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition">No Profile Active</p>
-            <span className="text-[10px] text-indigo-400 font-medium block mt-0.5">Sync with Extension</span>
-          </Link>
+          <div className="space-y-2">
+            <Link
+              href="/dashboard?user=demo"
+              className="block p-2 rounded-lg bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/30 transition text-center"
+            >
+              <p className="text-xs font-semibold text-white">Live Demo Profile</p>
+              <span className="text-[10px] text-indigo-300 font-medium block">Explore Sample Journey</span>
+            </Link>
+            <Link
+              href="/dashboard/sync"
+              className="block p-2 rounded-lg bg-slate-900/60 border border-dashed border-slate-700 hover:border-slate-500 transition group text-center"
+            >
+              <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition">No Profile Active</p>
+              <span className="text-[10px] text-slate-400 font-medium block">Sync via Extension</span>
+            </Link>
+          </div>
         )}
       </div>
     </aside>
