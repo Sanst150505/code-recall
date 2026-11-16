@@ -2,17 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import {
-  LayoutDashboard,
-  BrainCircuit,
-  RotateCcw,
-  History,
-  RefreshCw,
-  ExternalLink,
-  Users,
-  LogOut,
-  UserPlus,
-} from "lucide-react";
 
 interface SidebarProps {
   username?: string;
@@ -40,27 +29,22 @@ export function Sidebar({ username = "" }: SidebarProps) {
     {
       label: "Home",
       href: "/dashboard",
-      icon: LayoutDashboard,
     },
     {
       label: "Revise Today",
       href: "/dashboard/revision",
-      icon: RotateCcw,
     },
     {
       label: "My Progress",
       href: "/dashboard/topics",
-      icon: BrainCircuit,
     },
     {
       label: "History",
       href: "/dashboard/history",
-      icon: History,
     },
     {
       label: "Extension Sync",
       href: "/dashboard/sync",
-      icon: RefreshCw,
     },
   ];
 
@@ -68,12 +52,9 @@ export function Sidebar({ username = "" }: SidebarProps) {
     <aside className="w-60 bg-[#0a0f1d] border-r border-slate-800/80 flex flex-col justify-between shrink-0 h-screen sticky top-0 select-none z-30">
       <div>
         {/* Brand Header */}
-        <div className="h-16 flex items-center px-5 border-b border-slate-800/80 gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
-            <BrainCircuit className="w-4 h-4" />
-          </div>
+        <div className="h-16 flex items-center px-5 border-b border-slate-800/80">
           <div>
-            <span className="font-bold text-sm tracking-tight text-white">CodeRecall</span>
+            <span className="font-bold text-base tracking-tight text-white">CodeRecall</span>
             <p className="text-[11px] text-slate-400">DSA Practice</p>
           </div>
         </div>
@@ -82,19 +63,17 @@ export function Sidebar({ username = "" }: SidebarProps) {
         <nav className="p-3 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
-            const Icon = item.icon;
 
             return (
               <Link
                 key={item.href}
                 href={buildHref(item.href)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                className={`flex items-center px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                   isActive
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-indigo-600 text-white font-semibold"
                     : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-400"}`} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -105,50 +84,37 @@ export function Sidebar({ username = "" }: SidebarProps) {
       {/* User Info Footer */}
       <div className="p-3 border-t border-slate-800/80">
         {userParam ? (
-          <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/80">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-full bg-indigo-600/30 border border-indigo-500/50 flex items-center justify-center font-bold text-indigo-300 text-xs">
-                {userParam.charAt(0).toUpperCase()}
-              </div>
+          <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/80">
+            <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-slate-200 truncate">{userParam}</p>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  <span className="text-[10px] text-slate-400">LeetCode</span>
-                </div>
+                <p className="text-[10px] text-slate-400">LeetCode Connected</p>
               </div>
-            </div>
-            <div className="flex items-center gap-1">
               <button
                 onClick={handleClearUser}
-                title="Disconnect profile"
-                className="text-slate-500 hover:text-rose-400 p-1 rounded transition cursor-pointer"
+                className="text-[11px] text-slate-500 hover:text-rose-400 transition cursor-pointer font-medium ml-2 shrink-0"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                Disconnect
               </button>
+            </div>
+            <div className="mt-2 pt-2 border-t border-slate-800/60 text-right">
               <a
                 href={`https://leetcode.com/${userParam}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Open LeetCode Profile"
-                className="text-slate-500 hover:text-slate-300 p-1 rounded transition"
+                className="text-[11px] text-indigo-400 hover:text-indigo-300 transition"
               >
-                <ExternalLink className="w-3.5 h-3.5" />
+                View LeetCode Profile
               </a>
             </div>
           </div>
         ) : (
           <Link
             href="/dashboard/sync"
-            className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-900/60 border border-dashed border-slate-700 hover:border-indigo-500/80 transition group"
+            className="block p-2.5 rounded-lg bg-slate-900/60 border border-dashed border-slate-700 hover:border-slate-500 transition group text-center"
           >
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 group-hover:text-indigo-400 text-xs">
-              <UserPlus className="w-3.5 h-3.5" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition">No Profile Active</p>
-              <span className="text-[10px] text-indigo-400 font-medium">Sync with Extension &rarr;</span>
-            </div>
+            <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition">No Profile Active</p>
+            <span className="text-[10px] text-indigo-400 font-medium block mt-0.5">Sync with Extension</span>
           </Link>
         )}
       </div>

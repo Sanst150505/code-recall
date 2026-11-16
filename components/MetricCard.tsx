@@ -6,7 +6,7 @@ interface MetricCardProps {
   subtitle?: string;
   badge?: string;
   badgeVariant?: "neutral" | "emerald" | "amber" | "indigo" | "rose";
-  icon: ReactNode;
+  icon?: ReactNode;
   iconBg?: string;
 }
 
@@ -43,9 +43,11 @@ export function MetricCard({
           {subtitle && <p className="text-[11px] text-slate-600 mt-1">{subtitle}</p>}
         </div>
 
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 transition-transform group-hover:scale-105 ${iconBg}`}>
-          {icon}
-        </div>
+        {icon && (
+          <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 transition-transform group-hover:scale-105 ${iconBg}`}>
+            {icon}
+          </div>
+        )}
       </div>
     </div>
   );

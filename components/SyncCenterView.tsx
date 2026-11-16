@@ -1,13 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import {
-  RefreshCw,
-  CheckCircle2,
-  AlertCircle,
-  ExternalLink,
-} from "lucide-react";
-import { ChromeIcon } from "@/components/ChromeIcon";
 
 interface SyncStatusData {
   hasUser: boolean;
@@ -92,7 +85,6 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 <h2 className="text-sm font-bold text-slate-900">Connected LeetCode Account</h2>
               </div>
               <div className="flex items-center gap-3 mt-1.5">
@@ -101,10 +93,9 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
                   href={`https://leetcode.com/${activeUsername}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-xs"
+                  className="text-indigo-600 hover:text-indigo-800 text-xs font-medium"
                 >
-                  <span>Profile</span>
-                  <ExternalLink className="w-3 h-3" />
+                  View Profile
                 </a>
               </div>
             </div>
@@ -113,9 +104,8 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
               <button
                 onClick={handleSyncNow}
                 disabled={isSyncing}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 disabled:opacity-50 transition cursor-pointer"
+                className="px-3.5 py-2 rounded-lg text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 disabled:opacity-50 transition cursor-pointer"
               >
-                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
                 <span>{isSyncing ? "Syncing..." : "Sync Latest"}</span>
               </button>
             </div>
@@ -123,7 +113,7 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
 
           {message && (
             <div
-              className={`mt-4 p-3 rounded-lg border text-xs font-medium flex items-center gap-2 ${
+              className={`mt-4 p-3 rounded-lg border text-xs font-medium ${
                 message.type === "success"
                   ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                   : message.type === "error"
@@ -131,11 +121,6 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
                   : "bg-indigo-50 text-indigo-800 border-indigo-200"
               }`}
             >
-              {message.type === "success" ? (
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              ) : (
-                <AlertCircle className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              )}
               <span>{message.text}</span>
             </div>
           )}
@@ -179,14 +164,9 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
 
       {/* Chrome Extension Status & Quick Setup */}
       <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
-        <div className="flex items-center gap-2.5 pb-4 border-b border-slate-100">
-          <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-            <ChromeIcon className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="font-bold text-sm text-slate-900">Chrome Extension</h3>
-            <p className="text-xs text-slate-500">Sync directly from your browser session</p>
-          </div>
+        <div className="pb-4 border-b border-slate-100">
+          <h3 className="font-bold text-sm text-slate-900">Chrome Extension</h3>
+          <p className="text-xs text-slate-500">Sync directly from your browser session</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-xs">

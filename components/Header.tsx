@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 
 interface HeaderProps {
   title: string;
@@ -82,21 +81,18 @@ export function Header({
 
       <div className="flex items-center gap-3">
         {syncStatus === "success" && (
-          <span className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md font-medium">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md font-medium">
             {statusMessage}
           </span>
         )}
 
         {syncStatus === "error" && (
-          <span className="flex items-center gap-1.5 text-xs text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md font-medium">
-            <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
+          <span className="text-xs text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md font-medium">
             {statusMessage}
           </span>
         )}
 
         <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
           <span>Last sync:</span>
           <span className="font-semibold text-slate-900">{formattedTime}</span>
         </div>
@@ -104,9 +100,8 @@ export function Header({
         <button
           onClick={handleSync}
           disabled={isSyncing}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 hover:text-slate-900 disabled:opacity-50 transition cursor-pointer border border-slate-300"
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 hover:text-slate-900 disabled:opacity-50 transition cursor-pointer border border-slate-300"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-indigo-600" : ""}`} />
           <span>{isSyncing ? "Syncing..." : "Sync"}</span>
         </button>
       </div>

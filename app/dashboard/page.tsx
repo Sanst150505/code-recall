@@ -6,14 +6,6 @@ import { RevisionCard } from "@/components/RevisionCard";
 import { ActiveUserSession } from "@/components/ActiveUserSession";
 import { calculateHistoricalAnalytics } from "@/lib/analytics-service";
 import { prisma } from "@/lib/prisma";
-import {
-  CheckCircle2,
-  Code2,
-  AlertTriangle,
-  ArrowRight,
-  TrendingUp,
-} from "lucide-react";
-import { ChromeIcon } from "@/components/ChromeIcon";
 
 interface DashboardPageProps {
   searchParams: Promise<{ user?: string }>;
@@ -47,15 +39,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           {/* How It Works Guide */}
           <section className="space-y-4">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <ChromeIcon className="w-4 h-4 text-indigo-600" />
+            <h3 className="text-sm font-bold text-slate-900">
               Sync with the CodeRecall Extension
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-5 rounded-xl bg-white border border-slate-200">
-                <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mb-3">
-                  1
-                </div>
+                <span className="text-xs font-bold text-slate-500 block mb-2">Step 1</span>
                 <h4 className="text-xs font-bold text-slate-900">Load Extension</h4>
                 <p className="text-[11px] text-slate-600 mt-1">
                   In Chrome, open <code className="text-slate-800 bg-slate-100 px-1 py-0.5 rounded">chrome://extensions</code>, enable Developer mode, and load the unpacked <code className="text-slate-800 bg-slate-100 px-1 py-0.5 rounded">extension/</code> folder.
@@ -63,9 +52,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
 
               <div className="p-5 rounded-xl bg-white border border-slate-200">
-                <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mb-3">
-                  2
-                </div>
+                <span className="text-xs font-bold text-slate-500 block mb-2">Step 2</span>
                 <h4 className="text-xs font-bold text-slate-900">Sign into LeetCode</h4>
                 <p className="text-[11px] text-slate-600 mt-1">
                   Log into your account on <a href="https://leetcode.com" target="_blank" rel="noreferrer" className="text-indigo-600 underline">leetcode.com</a>.
@@ -73,9 +60,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
 
               <div className="p-5 rounded-xl bg-white border border-slate-200">
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 font-bold text-xs flex items-center justify-center mb-3">
-                  3
-                </div>
+                <span className="text-xs font-bold text-slate-500 block mb-2">Step 3</span>
                 <h4 className="text-xs font-bold text-slate-900">1-Click Sync</h4>
                 <p className="text-[11px] text-slate-600 mt-1">
                   Open the extension popup and click <strong>Sync Submissions</strong>. Your dashboard will open automatically.
@@ -104,9 +89,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
         <main className="p-6 sm:p-8 max-w-4xl mx-auto w-full">
           <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
             <h2 className="text-lg font-bold text-slate-900">
               No Submissions Synced for &ldquo;{usernameParam}&rdquo;
             </h2>
@@ -187,8 +169,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             subtitle={`${summary.totalUniqueProblemsAttempted} attempted`}
             badge={`${summary.difficultySolved.easy}E · ${summary.difficultySolved.medium}M · ${summary.difficultySolved.hard}H`}
             badgeVariant="indigo"
-            icon={<CheckCircle2 className="w-5 h-5 text-indigo-600" />}
-            iconBg="bg-indigo-50 border-indigo-100"
           />
 
           <MetricCard
@@ -197,8 +177,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             subtitle={`${summary.timeSpan.totalActiveDays} active practice days`}
             badge={`${summary.timeSpan.historySpanDays}d span`}
             badgeVariant="emerald"
-            icon={<Code2 className="w-5 h-5 text-emerald-600" />}
-            iconBg="bg-emerald-50 border-emerald-100"
           />
 
           <MetricCard
@@ -207,8 +185,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             subtitle="Accepted vs total submissions"
             badge="Historical"
             badgeVariant="emerald"
-            icon={<TrendingUp className="w-5 h-5 text-emerald-600" />}
-            iconBg="bg-emerald-50 border-emerald-100"
           />
 
           <MetricCard
@@ -217,8 +193,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             subtitle={`${summary.categoryCounts.CRITICAL_REVISION} decaying · ${summary.categoryCounts.INSUFFICIENT_EXPOSURE} deficits`}
             badge="Action"
             badgeVariant="amber"
-            icon={<AlertTriangle className="w-5 h-5 text-amber-600" />}
-            iconBg="bg-amber-50 border-amber-100"
           />
         </div>
 
@@ -237,10 +211,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                   ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
                   : "/dashboard/revision"
               }
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
             >
-              <span>View all recommendations</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              View all recommendations
             </Link>
           </div>
 

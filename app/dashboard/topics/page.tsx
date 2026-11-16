@@ -38,7 +38,7 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
                 href="/dashboard"
                 className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 transition"
               >
-                &larr; Back to Home
+                Back to Home
               </Link>
             </div>
           </div>

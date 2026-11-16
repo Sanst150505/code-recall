@@ -2,19 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  Search,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
-  Code2,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  RotateCw,
-} from "lucide-react";
 
 interface SubmissionRow {
   id: string;
@@ -99,30 +86,27 @@ export function SubmissionHistoryTable() {
   const statusBadge = (s: string) => {
     if (s === "Accepted") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
           Accepted
         </span>
       );
     }
     if (s === "Wrong Answer") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-          <XCircle className="w-3 h-3 text-rose-600" />
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
           Wrong Answer
         </span>
       );
     }
     if (s === "Time Limit Exceeded") {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-          <AlertCircle className="w-3 h-3 text-amber-600" />
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
           Time Limit Exceeded
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
         {s}
       </span>
     );
@@ -133,7 +117,6 @@ export function SubmissionHistoryTable() {
       {/* Search and Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between p-4 bg-white rounded-2xl border border-slate-200 shadow-xs">
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search problem title or slug..."
@@ -142,14 +125,13 @@ export function SubmissionHistoryTable() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-9 pr-4 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:outline-hidden transition"
+            className="w-full px-3.5 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:outline-hidden transition"
           />
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Status Filter */}
           <div className="flex items-center gap-1.5 text-xs">
-            <Filter className="w-3.5 h-3.5 text-slate-400" />
             <select
               value={status}
               onChange={(e) => {
@@ -215,8 +197,7 @@ export function SubmissionHistoryTable() {
         </span>
 
         {loading && (
-          <span className="flex items-center gap-1.5 text-indigo-600 font-medium text-xs">
-            <RotateCw className="w-3.5 h-3.5 animate-spin" />
+          <span className="text-indigo-600 font-medium text-xs">
             Loading records...
           </span>
         )}
@@ -308,10 +289,10 @@ export function SubmissionHistoryTable() {
                         href={`https://leetcode.com/problems/${sub.titleSlug}/`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-slate-400 hover:text-indigo-600 p-1.5 hover:bg-slate-100 rounded-lg inline-flex items-center transition"
+                        className="text-indigo-600 hover:text-indigo-800 font-medium px-2 py-1 rounded-md hover:bg-indigo-50 transition text-xs"
                         title="Open problem on LeetCode"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        Open
                       </a>
                     </td>
                   </tr>
@@ -342,19 +323,17 @@ export function SubmissionHistoryTable() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={pagination.page <= 1 || loading}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              <span>Previous</span>
+              Previous
             </button>
 
             <button
               onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
               disabled={pagination.page >= pagination.totalPages || loading}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
             >
-              <span>Next</span>
-              <ChevronRight className="w-3.5 h-3.5" />
+              Next
             </button>
           </div>
         </div>
