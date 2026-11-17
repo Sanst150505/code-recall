@@ -59,6 +59,7 @@ export interface TopicAnalytics {
 
 export interface OverallAnalyticsSummary {
   username: string;
+  lastSyncedAt: string | null;
   totalSubmissions: number;
   totalUniqueProblemsAttempted: number;
   totalUniqueProblemsSolved: number;
@@ -95,6 +96,7 @@ export async function calculateHistoricalAnalytics(
   if (targetUsername && targetUsername.trim() !== "") {
     user = await prisma.user.findUnique({
       where: { username: targetUsername.trim() },
+      include: { syncCheckpoint: true },
     });
   }
 
@@ -102,6 +104,7 @@ export async function calculateHistoricalAnalytics(
     // If no user was requested or user does not exist, return an empty analytics structure
     return {
       username: targetUsername || "",
+      lastSyncedAt: null,
       totalSubmissions: 0,
       totalUniqueProblemsAttempted: 0,
       totalUniqueProblemsSolved: 0,
@@ -539,6 +542,11 @@ export async function calculateHistoricalAnalytics(
 
   return {
     username: user.username,
+    lastSyncedAt:
+      user.lastSyncedAt?.toISOString() ??
+      user.syncCheckpoint?.lastSyncedAt?.toISOString() ??
+      latestSubDate?.toISOString() ??
+      null,
     totalSubmissions: submissions.length,
     totalUniqueProblemsAttempted: globalAttemptedProblemIds.size,
     totalUniqueProblemsSolved: globalSolvedProblemIds.size,

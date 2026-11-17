@@ -56,7 +56,7 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
         title="Revise Today"
         description="Spaced-repetition queue organized by concept decay, attempt friction, and exposure deficits."
         username={summary.username}
-        lastSyncedAt={summary.timeSpan.latestSubmission}
+        lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />
 
       <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">

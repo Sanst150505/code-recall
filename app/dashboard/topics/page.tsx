@@ -63,7 +63,7 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
         title="My Progress"
         description="Detailed competency matrix and difficulty breakdown across practiced topics (from 88 supported DSA categories)."
         username={summary.username}
-        lastSyncedAt={summary.timeSpan.latestSubmission}
+        lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />
 
       <main className="p-6 sm:p-8 space-y-6 max-w-6xl mx-auto w-full">

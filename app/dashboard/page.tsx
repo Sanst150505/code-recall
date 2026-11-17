@@ -159,7 +159,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       <Header
         title="Home"
         username={summary.username}
-        lastSyncedAt={summary.timeSpan.latestSubmission}
+        lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />
 
       <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">
