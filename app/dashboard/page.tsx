@@ -163,26 +163,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       />
 
       <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">
-        {/* Synthetic Demo Banner */}
-        {summary.username === "demo" && (
-          <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-            <div className="text-indigo-950">
-              <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
-                Sample Profile Preview:
-              </strong>
-              <span>
-                Simulated 9-month LeetCode journey. All retention decay, attempt friction, and spaced-repetition queues are computed live by the CodeRecall analytics engine.
-              </span>
-            </div>
-            <Link
-              href="/dashboard/sync"
-              className="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition shrink-0 self-start sm:self-auto"
-            >
-              Sync Your Own LeetCode
-            </Link>
-          </div>
-        )}
-
         {/* Short Greeting & Action Cue */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>

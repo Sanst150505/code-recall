@@ -67,20 +67,6 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
       />
 
       <main className="p-6 sm:p-8 space-y-6 max-w-6xl mx-auto w-full">
-        {/* Synthetic Demo Banner */}
-        {summary.username === "demo" && (
-          <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
-                Sample Profile Preview:
-              </strong>
-              <span>
-                Demonstrating skill assessment across {summary.totalTopics} active DSA topics out of 88 supported LeetCode categories.
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Unified Competency & Health Strip */}
         <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

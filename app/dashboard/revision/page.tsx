@@ -60,23 +60,6 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
       />
 
       <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">
-        {/* Synthetic Demo Banner */}
-        {summary.username === "demo" && (
-          <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
-                Sample Profile Preview:
-              </strong>
-              <span>
-                Demonstrating 5 critical decay topics (practiced 90+ days ago) and 1 high-friction graph topic.
-              </span>
-            </div>
-            <span className="text-[11px] font-semibold text-indigo-700 bg-white px-2 py-0.5 rounded-md border border-indigo-200 self-start sm:self-auto">
-              {summary.totalRevisionsCompleted} Reassessments Recorded
-            </span>
-          </div>
-        )}
-
         {/* Action Overview Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
