@@ -141,13 +141,6 @@ export function RevisionCard({
     }
   };
 
-  const diffBadgeColor = (diff: string) => {
-    if (diff === "Easy") return "text-emerald-700 bg-emerald-50 border-emerald-200";
-    if (diff === "Medium") return "text-amber-700 bg-amber-50 border-amber-200";
-    if (diff === "Hard") return "text-rose-700 bg-rose-50 border-rose-200";
-    return "text-slate-700 bg-slate-50 border-slate-200";
-  };
-
   const outcomeLabels: Record<string, { text: string; color: string }> = {
     INDEPENDENT: { text: "Solved Independently", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
     WITH_HINTS: { text: "Solved with Hints", color: "text-amber-700 bg-amber-50 border-amber-200" },
@@ -158,33 +151,33 @@ export function RevisionCard({
     <div
       className={`p-5 rounded-2xl bg-white border transition-all flex flex-col justify-between relative ${
         isFeatured
-          ? "border-indigo-300 ring-2 ring-indigo-500/10 shadow-md bg-gradient-to-br from-white via-indigo-50/20 to-white"
-          : "border-slate-200/90 shadow-xs hover:shadow-md"
+          ? "border-indigo-300 ring-1 ring-indigo-500/20 shadow-md bg-gradient-to-br from-white via-indigo-50/15 to-white"
+          : "border-slate-200/90 shadow-2xs hover:shadow-sm"
       }`}
     >
       <div>
         {/* Top Header */}
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
             {rank !== undefined && (
               <span
                 className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${
                   isFeatured
-                    ? "bg-indigo-600 text-white"
-                    : "bg-slate-100 text-slate-600"
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "bg-slate-100 text-slate-700"
                 }`}
               >
                 #{rank}
               </span>
             )}
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base text-slate-900 tracking-tight">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-bold text-base text-slate-900 tracking-tight truncate">
                   {item.topic}
                 </h3>
                 {isFeatured && (
                   <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-600 text-white">
-                    Top Priority
+                    #1 Focus
                   </span>
                 )}
               </div>
@@ -207,89 +200,92 @@ export function RevisionCard({
               <span className="text-[9px] text-slate-400 font-normal">/100</span>
 
               {activeTooltip === "priority" && (
-                <div className="absolute right-0 top-7 z-30 w-52 p-2 bg-slate-900 text-slate-200 text-[10px] rounded-lg shadow-lg border border-slate-700 leading-snug pointer-events-none">
-                  Priority Score: Composite retention urgency factoring in time decay (45%), solve volume deficit (35%), and past struggle friction (20%).
+                <div className="absolute right-0 top-7 z-30 w-56 p-2.5 bg-slate-900 text-slate-200 text-[10px] rounded-lg shadow-xl border border-slate-700 leading-snug pointer-events-none">
+                  Priority Score: Composite retention urgency factoring time decay (45%), solve volume deficit (35%), and past struggle friction (20%).
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Supporting metrics pills */}
-        <div className="flex flex-wrap items-center gap-2 mt-3.5 text-xs text-slate-700">
-          <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 font-medium">
-            <strong className="text-slate-900">{item.uniqueSolved}</strong> solved
+        {/* Supporting metrics - Clean integrated inline layout */}
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mt-3 text-xs text-slate-600">
+          <span className="font-medium text-slate-800">
+            {item.uniqueSolved} solved
             {item.uniqueSolved > 0 && (
-              <span className="text-slate-600 text-[10px] ml-1">
+              <span className="text-slate-500 text-[11px] font-normal ml-1">
                 ({item.difficulty.easy} Easy · {item.difficulty.medium} Med · {item.difficulty.hard} Hard)
               </span>
             )}
           </span>
 
-          <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 font-medium">
-            <strong className="text-slate-900">{item.totalAttempts}</strong> attempts
-            {item.passRate !== null && (
-              <span className="text-slate-600 text-[10px] ml-1">({item.passRate}% pass)</span>
-            )}
-          </span>
+          <span className="text-slate-300">·</span>
 
-          {item.struggleRatio > 1 && (
-            <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 font-medium">
-              Struggle: <strong className="text-slate-900">{item.struggleRatio}x</strong>
-            </span>
-          )}
-
-          <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 font-medium">
+          <span className="text-slate-700 font-medium">
             {item.daysSinceLastPractice !== null
               ? `${item.daysSinceLastPractice}D ago`
               : "Never attempted"}
           </span>
 
+          <span className="text-slate-300">·</span>
+
+          <span className="text-slate-600">
+            {item.totalAttempts} att ({item.passRate !== null ? `${item.passRate}% pass` : "—"})
+          </span>
+
+          {item.struggleRatio > 1.2 && (
+            <>
+              <span className="text-slate-300">·</span>
+              <span className="text-amber-700 font-medium bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200 text-[10px]">
+                {item.struggleRatio}x struggle
+              </span>
+            </>
+          )}
+
           {localReassessmentCount > 0 && localLastOutcome && outcomeLabels[localLastOutcome] && (
-            <span
-              className={`px-2 py-0.5 rounded-lg border text-[11px] font-medium ${outcomeLabels[localLastOutcome].color}`}
-            >
-              Reassessed: {outcomeLabels[localLastOutcome].text}
-            </span>
+            <>
+              <span className="text-slate-300">·</span>
+              <span
+                className={`px-2 py-0.2 rounded-md border text-[10px] font-semibold ${outcomeLabels[localLastOutcome].color}`}
+              >
+                Reassessed
+              </span>
+            </>
           )}
         </div>
 
-        {/* Transparent Explanation */}
-        <p className="mt-3.5 text-xs leading-relaxed text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
-          {item.explanation}
-        </p>
-
-        {/* Recommended Action */}
-        <div className="mt-3 p-3 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950">
-          <span className="font-semibold text-indigo-800 block mb-0.5">Recommended Next Action:</span>
-          {item.recommendedAction}
+        {/* Unified Rationale & Guidance Block */}
+        <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs space-y-1.5">
+          <p className="text-slate-700 leading-relaxed font-normal">
+            {item.explanation}
+          </p>
+          <p className="text-[11px] text-indigo-900 font-medium">
+            <span className="font-semibold text-indigo-700">Directive:</span> {item.recommendedAction}
+          </p>
         </div>
 
         {/* Previously Solved Problems for this Topic */}
-        {item.solvedProblems && item.solvedProblems.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-slate-100">
-            <p className="text-[11px] font-semibold text-slate-700 mb-2">
-              Associated Problems Solved ({item.solvedProblems.length}):
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {item.solvedProblems.slice(0, 4).map((p) => (
+        {item.solvedProblems && item.solvedProblems.length > 0 && !isDrawerOpen && (
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span className="text-[11px] font-medium text-slate-500">
+              {item.solvedProblems.length} available to review:
+            </span>
+            <div className="flex items-center gap-1.5 truncate max-w-[70%]">
+              {item.solvedProblems.slice(0, 2).map((p) => (
                 <a
                   key={p.id}
                   href={`https://leetcode.com/problems/${p.slug}/`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-800 transition border border-slate-200"
+                  className="truncate max-w-[130px] px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition border border-slate-200"
                   title={`Open ${p.title} on LeetCode`}
                 >
-                  <span className="truncate max-w-[130px]">{p.title}</span>
-                  <span className={`text-[9px] px-1 py-0.2 rounded border ${diffBadgeColor(p.difficulty)}`}>
-                    {p.difficulty}
-                  </span>
+                  {p.title}
                 </a>
               ))}
-              {item.solvedProblems.length > 4 && (
-                <span className="text-[10px] text-slate-500 self-center">
-                  +{item.solvedProblems.length - 4} more
+              {item.solvedProblems.length > 2 && (
+                <span className="text-[10px] text-slate-500 font-medium shrink-0">
+                  +{item.solvedProblems.length - 2} more
                 </span>
               )}
             </div>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
-import { MetricCard } from "@/components/MetricCard";
 import { ActivityTimelineChart } from "@/components/Charts";
 import { RevisionCard } from "@/components/RevisionCard";
 import { ActiveUserSession } from "@/components/ActiveUserSession";
@@ -185,15 +184,15 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         )}
 
         {/* Short Greeting & Action Cue */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">
-              {summary.username === "demo" ? "Practice Overview (Demo Persona)" : `Welcome back, ${summary.username}`}
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+              {summary.username === "demo" ? "Performance Dashboard" : `Welcome back, ${summary.username}`}
             </h2>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-xs text-slate-600 mt-0.5">
               {totalNeedsRevision > 0
-                ? `You have ${totalNeedsRevision} DSA topics flagged for spaced revision today.`
-                : "All concepts are fresh and well-maintained. Continue your current cadence."}
+                ? `${totalNeedsRevision} DSA concepts flagged for spaced repetition review.`
+                : "All learned algorithmic patterns are currently fresh and well-maintained."}
             </p>
           </div>
 
@@ -204,50 +203,85 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                   ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
                   : "/dashboard/revision"
               }
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 transition"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 transition shadow-2xs"
             >
-              Open Revision Queue ({totalNeedsRevision})
+              Open Full Queue ({totalNeedsRevision})
             </Link>
           </div>
         </div>
 
-        {/* Important Summary Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            title="Problems Solved"
-            value={summary.totalUniqueProblemsSolved}
-            subtitle={`${summary.totalUniqueProblemsAttempted} attempted across ${summary.totalTopics} active topics`}
-            badge={`${summary.difficultySolved.easy} Easy · ${summary.difficultySolved.medium} Med · ${summary.difficultySolved.hard} Hard`}
-            badgeVariant="indigo"
-            tooltip="Deduplicated count of unique problems solved across all ingested submissions"
-          />
+        {/* Executive Pulse Metrics - 3 Clear, High-Signal Indicators */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                Problems Solved
+              </span>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">
+                {summary.totalTopics} Topics Active
+              </span>
+            </div>
+            <div className="mt-2.5">
+              <span className="text-2xl font-bold text-slate-900 tracking-tight">
+                {summary.totalUniqueProblemsSolved}
+              </span>
+              <p className="text-[11px] text-slate-600 mt-1 font-medium">
+                {summary.difficultySolved.easy} Easy · {summary.difficultySolved.medium} Med · {summary.difficultySolved.hard} Hard
+              </p>
+            </div>
+          </div>
 
-          <MetricCard
-            title="Total Submissions"
-            value={summary.totalSubmissions}
-            subtitle={`${summary.timeSpan.totalActiveDays} active practice days`}
-            badge={`${summary.timeSpan.historySpanDays}D span`}
-            badgeVariant="emerald"
-            tooltip="Total historical submission attempts synced from LeetCode"
-          />
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                Retention Health
+              </span>
+              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
+                totalNeedsRevision > 0
+                  ? "bg-rose-50 text-rose-700 border-rose-200"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
+              }`}>
+                {totalNeedsRevision > 0 ? `${totalNeedsRevision} At Risk` : "100% Fresh"}
+              </span>
+            </div>
+            <div className="mt-2.5">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-slate-900 tracking-tight">
+                  {summary.categoryCounts.ACTIVE_MAINTAINED}
+                </span>
+                <span className="text-xs text-slate-500 font-medium">
+                  / {summary.totalTopics} active topics maintained
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 mt-1">
+                {summary.categoryCounts.CRITICAL_REVISION} critical decay · {summary.categoryCounts.HIGH_FRICTION} friction · {summary.categoryCounts.INSUFFICIENT_EXPOSURE} low exposure
+              </p>
+            </div>
+          </div>
 
-          <MetricCard
-            title="Pass Rate"
-            value={`${summary.overallPassRate ?? 0}%`}
-            subtitle="Accepted vs total submissions"
-            badge="Historical"
-            badgeVariant="emerald"
-            tooltip="Percentage of accepted solutions relative to total historical attempts"
-          />
-
-          <MetricCard
-            title="Revision Needed"
-            value={totalNeedsRevision}
-            subtitle={`${summary.categoryCounts.CRITICAL_REVISION} decay · ${summary.categoryCounts.HIGH_FRICTION} friction · ${summary.categoryCounts.INSUFFICIENT_EXPOSURE} deficit`}
-            badge="Action Queue"
-            badgeVariant="amber"
-            tooltip="Total topics flagged by spaced-repetition heuristics (Decay + Friction + Volume Deficit)"
-          />
+          <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                Practice Velocity
+              </span>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                {summary.overallPassRate ?? 0}% Pass Rate
+              </span>
+            </div>
+            <div className="mt-2.5">
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-slate-900 tracking-tight">
+                  {summary.totalSubmissions}
+                </span>
+                <span className="text-xs text-slate-500 font-medium">
+                  submissions synced
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 mt-1 font-medium">
+                {summary.timeSpan.totalActiveDays} active days over {summary.timeSpan.historySpanDays}D span
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Revision Recommendations Section */}
@@ -255,9 +289,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Revise Today</h3>
+                <h3 className="text-base font-bold text-slate-900 tracking-tight">
+                  Priority Revision Queue
+                </h3>
                 <p className="text-xs text-slate-600">
-                  High-priority topics prioritized by time decay, previous trial-and-error, and practice deficits.
+                  Calculated by retention decay, past friction, and exposure deficits.
                 </p>
               </div>
               <Link
@@ -266,15 +302,15 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
                     : "/dashboard/revision"
                 }
-                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition"
               >
-                View full queue ({totalNeedsRevision})
+                View full queue ({totalNeedsRevision}) &rarr;
               </Link>
             </div>
 
-            {/* Featured #1 Recommendation */}
+            {/* Featured Focus Topic */}
             {topCandidate && (
-              <div className="mb-4">
+              <div>
                 <RevisionCard
                   item={topCandidate}
                   rank={1}
@@ -284,9 +320,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
             )}
 
-            {/* Secondary Top Recommendations */}
+            {/* Next 2 Candidates in Queue */}
             {otherCandidates.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {otherCandidates.map((item, idx) => (
                   <RevisionCard
                     key={item.topic}

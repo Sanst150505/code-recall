@@ -81,30 +81,84 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
           </div>
         )}
 
-        {/* Quick Topic Status Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-            <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">Active Topics</span>
-            <p className="text-xl font-bold text-slate-900 mt-1">
-              {summary.totalTopics} <span className="text-xs text-slate-600 font-normal">/ 88</span>
-            </p>
+        {/* Unified Competency & Health Strip */}
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                DSA Category Coverage
+              </span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-2xl font-bold text-slate-900 tracking-tight">
+                  {summary.totalTopics}
+                </span>
+                <span className="text-xs text-slate-500 font-medium">
+                  of 88 supported categories practiced ({Math.round((summary.totalTopics / 88) * 100)}%)
+                </span>
+              </div>
+            </div>
+
+            {/* Status counts in a calm inline strip */}
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="px-3 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Maintained: <strong>{summary.categoryCounts.ACTIVE_MAINTAINED}</strong></span>
+              </span>
+
+              <span className="px-3 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>Critical Decay: <strong>{summary.categoryCounts.CRITICAL_REVISION}</strong></span>
+              </span>
+
+              <span className="px-3 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-800 font-medium flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                <span>High Friction: <strong>{summary.categoryCounts.HIGH_FRICTION}</strong></span>
+              </span>
+
+              {summary.categoryCounts.INSUFFICIENT_EXPOSURE > 0 && (
+                <span className="px-3 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 font-medium flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span>Low Exposure: <strong>{summary.categoryCounts.INSUFFICIENT_EXPOSURE}</strong></span>
+                </span>
+              )}
+            </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-rose-50/50 border border-rose-200 shadow-2xs">
-            <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wider">Decay Risk</span>
-            <p className="text-xl font-bold text-rose-800 mt-1">{summary.categoryCounts.CRITICAL_REVISION}</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-200 shadow-2xs">
-            <span className="text-[11px] font-semibold text-indigo-700 uppercase tracking-wider">High Friction</span>
-            <p className="text-xl font-bold text-indigo-800 mt-1">{summary.categoryCounts.HIGH_FRICTION}</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200 shadow-2xs">
-            <span className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">Low Exposure</span>
-            <p className="text-xl font-bold text-amber-800 mt-1">{summary.categoryCounts.INSUFFICIENT_EXPOSURE}</p>
-          </div>
-          <div className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200 shadow-2xs">
-            <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">Maintained</span>
-            <p className="text-xl font-bold text-emerald-800 mt-1">{summary.categoryCounts.ACTIVE_MAINTAINED}</p>
-          </div>
+
+          {/* Visual Stacked Retention Health Bar */}
+          {summary.totalTopics > 0 && (
+            <div className="w-full">
+              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex">
+                <div
+                  style={{
+                    width: `${(summary.categoryCounts.ACTIVE_MAINTAINED / summary.totalTopics) * 100}%`,
+                  }}
+                  className="bg-emerald-500 h-full transition-all"
+                  title={`Maintained: ${summary.categoryCounts.ACTIVE_MAINTAINED} topics`}
+                />
+                <div
+                  style={{
+                    width: `${(summary.categoryCounts.CRITICAL_REVISION / summary.totalTopics) * 100}%`,
+                  }}
+                  className="bg-rose-500 h-full transition-all"
+                  title={`Critical Decay: ${summary.categoryCounts.CRITICAL_REVISION} topics`}
+                />
+                <div
+                  style={{
+                    width: `${(summary.categoryCounts.HIGH_FRICTION / summary.totalTopics) * 100}%`,
+                  }}
+                  className="bg-indigo-500 h-full transition-all"
+                  title={`High Friction: ${summary.categoryCounts.HIGH_FRICTION} topics`}
+                />
+                <div
+                  style={{
+                    width: `${(summary.categoryCounts.INSUFFICIENT_EXPOSURE / summary.totalTopics) * 100}%`,
+                  }}
+                  className="bg-amber-400 h-full transition-all"
+                  title={`Low Exposure: ${summary.categoryCounts.INSUFFICIENT_EXPOSURE} topics`}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Charts: Difficulty Split + Top Topics */}

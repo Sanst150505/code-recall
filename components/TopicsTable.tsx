@@ -210,6 +210,17 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
                         <Link
                           href={
                             userParam
+                              ? `/dashboard/revision?user=${encodeURIComponent(userParam)}`
+                              : `/dashboard/revision`
+                          }
+                          className="text-indigo-600 hover:text-indigo-800 font-semibold px-2 py-1 hover:bg-indigo-50 rounded-md transition text-xs"
+                          title="Open in revision queue"
+                        >
+                          Revise
+                        </Link>
+                        <Link
+                          href={
+                            userParam
                               ? `/dashboard/history?topic=${encodeURIComponent(t.topic)}&user=${encodeURIComponent(userParam)}`
                               : `/dashboard/history?topic=${encodeURIComponent(t.topic)}`
                           }
