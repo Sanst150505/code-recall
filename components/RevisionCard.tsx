@@ -156,9 +156,9 @@ export function RevisionCard({
       }`}
     >
       <div>
-        {/* Top Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2.5 min-w-0">
+        {/* Top Status & Category Bar */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
             {rank !== undefined && (
               <span
                 className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${
@@ -170,34 +170,27 @@ export function RevisionCard({
                 #{rank}
               </span>
             )}
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-bold text-base text-slate-900 tracking-tight truncate">
-                  {item.topic}
-                </h3>
-                {isFeatured && (
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-600 text-white">
-                    #1 Focus
-                  </span>
-                )}
-              </div>
-            </div>
+            {isFeatured && (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-600 text-white shadow-xs">
+                #1 Focus
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
             <span
-              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${config.bg} ${config.text} ${config.border}`}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold border ${config.bg} ${config.text} ${config.border}`}
             >
               {config.label}
             </span>
 
             <div
-              className="relative flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-900 text-white shadow-xs cursor-help"
+              className="relative flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-900 text-white shadow-xs cursor-help"
               onMouseEnter={() => setActiveTooltip("priority")}
               onMouseLeave={() => setActiveTooltip(null)}
             >
               <span>{item.priorityScore}</span>
-              <span className="text-[9px] text-slate-400 font-normal">/100</span>
+              <span className="text-[8.5px] text-slate-400 font-normal">/100</span>
 
               {activeTooltip === "priority" && (
                 <div className="absolute right-0 top-7 z-30 w-56 p-2.5 bg-slate-900 text-slate-200 text-[10px] rounded-lg shadow-xl border border-slate-700 leading-snug pointer-events-none">
@@ -207,6 +200,11 @@ export function RevisionCard({
             </div>
           </div>
         </div>
+
+        {/* Dedicated Full-Width Topic Title (Never truncated) */}
+        <h3 className="font-bold text-base text-slate-900 tracking-tight mt-2.5 leading-snug break-words">
+          {item.topic}
+        </h3>
 
         {/* Supporting metrics - Clean integrated inline layout */}
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 mt-3 text-xs text-slate-600">
