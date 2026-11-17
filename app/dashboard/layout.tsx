@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Sidebar } from "@/components/Sidebar";
+import { ActiveUserSession } from "@/components/ActiveUserSession";
 
 export default function DashboardLayout({
   children,
@@ -8,6 +9,11 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex">
+      {/* Active User Session Syncer */}
+      <Suspense fallback={null}>
+        <ActiveUserSession />
+      </Suspense>
+
       {/* Dark Sidebar */}
       <Suspense fallback={<div className="w-60 bg-[#0a0f1d] shrink-0 h-screen sticky top-0" />}>
         <Sidebar />

@@ -48,34 +48,68 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
   const deficitTopics = summary.topics.filter((t) => t.category === "INSUFFICIENT_EXPOSURE");
   const frictionTopics = summary.topics.filter((t) => t.category === "HIGH_FRICTION");
   const maintainedTopics = summary.topics.filter((t) => t.category === "ACTIVE_MAINTAINED");
+  const totalActionNeeded = criticalTopics.length + deficitTopics.length + frictionTopics.length;
 
   return (
     <>
       <Header
         title="Revise Today"
-        description="Concepts organized by priority, recency, and past struggle."
+        description="Spaced-repetition queue organized by concept decay, attempt friction, and exposure deficits."
         username={summary.username}
         lastSyncedAt={summary.timeSpan.latestSubmission}
       />
 
       <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">
+        {/* Synthetic Demo Banner */}
+        {summary.username === "demo" && (
+          <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
+                Sample Sandbox Persona:
+              </strong>
+              <span>
+                Demonstrating 5 critical decay topics (practiced 90+ days ago) and 1 high-friction graph topic.
+              </span>
+            </div>
+            <span className="text-[11px] font-semibold text-indigo-700 bg-white px-2 py-0.5 rounded-md border border-indigo-200 self-start sm:self-auto">
+              {summary.totalRevisionsCompleted} Reassessments Recorded
+            </span>
+          </div>
+        )}
+
+        {/* Action Overview Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">
+              Revision Queue ({totalActionNeeded} Topics Actionable)
+            </h2>
+            <p className="text-xs text-slate-600 mt-1">
+              Select any topic, open associated LeetCode problems to practice, and mark your reassessment outcome.
+            </p>
+          </div>
+        </div>
+
         {/* Quick Summary Counts */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div className="p-3.5 rounded-xl bg-white border border-slate-200">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
             <span className="text-slate-600 font-medium block">Critical Decay</span>
             <span className="text-xl font-bold text-rose-600 mt-0.5 block">{criticalTopics.length}</span>
+            <span className="text-[10px] text-slate-600 mt-1 block">0 solves in 90+ Days</span>
           </div>
-          <div className="p-3.5 rounded-xl bg-white border border-slate-200">
-            <span className="text-slate-600 font-medium block">Low Exposure</span>
-            <span className="text-xl font-bold text-amber-600 mt-0.5 block">{deficitTopics.length}</span>
-          </div>
-          <div className="p-3.5 rounded-xl bg-white border border-slate-200">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
             <span className="text-slate-600 font-medium block">High Friction</span>
             <span className="text-xl font-bold text-indigo-600 mt-0.5 block">{frictionTopics.length}</span>
+            <span className="text-[10px] text-slate-600 mt-1 block">High trial-and-error</span>
           </div>
-          <div className="p-3.5 rounded-xl bg-white border border-slate-200">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+            <span className="text-slate-600 font-medium block">Low Exposure</span>
+            <span className="text-xl font-bold text-amber-600 mt-0.5 block">{deficitTopics.length}</span>
+            <span className="text-[10px] text-slate-600 mt-1 block">&le; 3 problems solved</span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
             <span className="text-slate-600 font-medium block">Maintained</span>
             <span className="text-xl font-bold text-emerald-600 mt-0.5 block">{maintainedTopics.length}</span>
+            <span className="text-[10px] text-slate-600 mt-1 block">Active within 30 Days</span>
           </div>
         </div>
 
@@ -88,7 +122,7 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
             <span className="text-xs px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold border border-rose-200">
               {criticalTopics.length}
             </span>
-            <span className="text-xs text-slate-600">· Solid past mastery, but 0 practice in 90+ days</span>
+            <span className="text-xs text-slate-600">· Solid past mastery, but 0 practice in 90+ Days</span>
           </div>
 
           {criticalTopics.length > 0 ? (

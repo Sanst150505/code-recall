@@ -61,27 +61,47 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
     <>
       <Header
         title="My Progress"
-        description="Detailed competency matrix and difficulty breakdown across 88 topics."
+        description="Detailed competency matrix and difficulty breakdown across practiced topics (from 88 supported DSA categories)."
         username={summary.username}
         lastSyncedAt={summary.timeSpan.latestSubmission}
       />
 
       <main className="p-6 sm:p-8 space-y-6 max-w-6xl mx-auto w-full">
-        {/* Quick Topic Status Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-xl bg-white border border-slate-200">
-            <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">Total Topics</span>
-            <p className="text-xl font-bold text-slate-900 mt-1">{summary.totalTopics}</p>
+        {/* Synthetic Demo Banner */}
+        {summary.username === "demo" && (
+          <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
+                Sample Sandbox Persona:
+              </strong>
+              <span>
+                Demonstrating skill assessment across {summary.totalTopics} active DSA topics out of 88 supported LeetCode categories.
+              </span>
+            </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-rose-50/50 border border-rose-200">
+        )}
+
+        {/* Quick Topic Status Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+            <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">Active Topics</span>
+            <p className="text-xl font-bold text-slate-900 mt-1">
+              {summary.totalTopics} <span className="text-xs text-slate-600 font-normal">/ 88</span>
+            </p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-rose-50/50 border border-rose-200 shadow-2xs">
             <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wider">Decay Risk</span>
             <p className="text-xl font-bold text-rose-800 mt-1">{summary.categoryCounts.CRITICAL_REVISION}</p>
           </div>
-          <div className="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200">
+          <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-200 shadow-2xs">
+            <span className="text-[11px] font-semibold text-indigo-700 uppercase tracking-wider">High Friction</span>
+            <p className="text-xl font-bold text-indigo-800 mt-1">{summary.categoryCounts.HIGH_FRICTION}</p>
+          </div>
+          <div className="p-3.5 rounded-xl bg-amber-50/50 border border-amber-200 shadow-2xs">
             <span className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">Low Exposure</span>
             <p className="text-xl font-bold text-amber-800 mt-1">{summary.categoryCounts.INSUFFICIENT_EXPOSURE}</p>
           </div>
-          <div className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200">
+          <div className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200 shadow-2xs">
             <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">Maintained</span>
             <p className="text-xl font-bold text-emerald-800 mt-1">{summary.categoryCounts.ACTIVE_MAINTAINED}</p>
           </div>

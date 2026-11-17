@@ -147,7 +147,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     .map((entry) => entry[1]);
 
   const totalNeedsRevision =
-    summary.categoryCounts.CRITICAL_REVISION + summary.categoryCounts.INSUFFICIENT_EXPOSURE;
+    summary.categoryCounts.CRITICAL_REVISION +
+    summary.categoryCounts.HIGH_FRICTION +
+    summary.categoryCounts.INSUFFICIENT_EXPOSURE;
+
+  const topCandidate = summary.topRevisionCandidates[0];
+  const otherCandidates = summary.topRevisionCandidates.slice(1, 3);
 
   return (
     <>
@@ -159,14 +164,51 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       />
 
       <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">
-        {/* Short Greeting */}
-        <div>
-          <h2 className="text-xl font-bold text-slate-900">
-            Welcome back, {summary.username}
-          </h2>
-          <p className="text-xs text-slate-600 mt-1">
-            Here is your practice summary and the topics that need revision today.
-          </p>
+        {/* Synthetic Demo Banner */}
+        {summary.username === "demo" && (
+          <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="text-indigo-950">
+              <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
+                Sample Sandbox Persona:
+              </strong>
+              <span>
+                Simulated 9-month LeetCode journey. All retention decay, attempt friction, and spaced-repetition queues are computed live by the CodeRecall analytics engine.
+              </span>
+            </div>
+            <Link
+              href="/dashboard/sync"
+              className="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition shrink-0 self-start sm:self-auto"
+            >
+              Sync Your Own LeetCode
+            </Link>
+          </div>
+        )}
+
+        {/* Short Greeting & Action Cue */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">
+              {summary.username === "demo" ? "Practice Overview (Demo Persona)" : `Welcome back, ${summary.username}`}
+            </h2>
+            <p className="text-xs text-slate-600 mt-1">
+              {totalNeedsRevision > 0
+                ? `You have ${totalNeedsRevision} DSA topics flagged for spaced revision today.`
+                : "All concepts are fresh and well-maintained. Continue your current cadence."}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              href={
+                usernameParam
+                  ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
+                  : "/dashboard/revision"
+              }
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 transition"
+            >
+              Open Revision Queue ({totalNeedsRevision})
+            </Link>
+          </div>
         </div>
 
         {/* Important Summary Metrics */}
@@ -174,17 +216,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <MetricCard
             title="Problems Solved"
             value={summary.totalUniqueProblemsSolved}
-            subtitle={`${summary.totalUniqueProblemsAttempted} attempted`}
+            subtitle={`${summary.totalUniqueProblemsAttempted} attempted across ${summary.totalTopics} active topics`}
             badge={`${summary.difficultySolved.easy}E · ${summary.difficultySolved.medium}M · ${summary.difficultySolved.hard}H`}
             badgeVariant="indigo"
+            tooltip="Deduplicated count of unique problems solved across all ingested submissions"
           />
 
           <MetricCard
             title="Total Submissions"
             value={summary.totalSubmissions}
             subtitle={`${summary.timeSpan.totalActiveDays} active practice days`}
-            badge={`${summary.timeSpan.historySpanDays}d span`}
+            badge={`${summary.timeSpan.historySpanDays}D span`}
             badgeVariant="emerald"
+            tooltip="Total historical submission attempts synced from LeetCode"
           />
 
           <MetricCard
@@ -193,49 +237,68 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             subtitle="Accepted vs total submissions"
             badge="Historical"
             badgeVariant="emerald"
+            tooltip="Percentage of accepted solutions relative to total historical attempts"
           />
 
           <MetricCard
             title="Revision Needed"
             value={totalNeedsRevision}
-            subtitle={`${summary.categoryCounts.CRITICAL_REVISION} decaying · ${summary.categoryCounts.INSUFFICIENT_EXPOSURE} deficits`}
-            badge="Action"
+            subtitle={`${summary.categoryCounts.CRITICAL_REVISION} decay · ${summary.categoryCounts.HIGH_FRICTION} friction · ${summary.categoryCounts.INSUFFICIENT_EXPOSURE} deficit`}
+            badge="Action Queue"
             badgeVariant="amber"
+            tooltip="Total topics flagged by spaced-repetition heuristics (Decay + Friction + Volume Deficit)"
           />
         </div>
 
-        {/* Revision Recommendation Cards */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Revise Today</h3>
-              <p className="text-xs text-slate-600">
-                Top concepts prioritized by days since last practice and struggle.
-              </p>
+        {/* Revision Recommendations Section */}
+        {summary.topRevisionCandidates.length > 0 && (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Revise Today</h3>
+                <p className="text-xs text-slate-600">
+                  High-priority topics prioritized by time decay, previous trial-and-error, and practice deficits.
+                </p>
+              </div>
+              <Link
+                href={
+                  usernameParam
+                    ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
+                    : "/dashboard/revision"
+                }
+                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+              >
+                View full queue ({totalNeedsRevision})
+              </Link>
             </div>
-            <Link
-              href={
-                usernameParam
-                  ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
-                  : "/dashboard/revision"
-              }
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800"
-            >
-              View all recommendations
-            </Link>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {summary.topRevisionCandidates.slice(0, 3).map((item, idx) => (
-              <RevisionCard
-                key={item.topic}
-                item={item}
-                rank={idx + 1}
-                username={summary.username}
-              />
-            ))}
-          </div>
-        </section>
+            {/* Featured #1 Recommendation */}
+            {topCandidate && (
+              <div className="mb-4">
+                <RevisionCard
+                  item={topCandidate}
+                  rank={1}
+                  username={summary.username}
+                  isFeatured={true}
+                />
+              </div>
+            )}
+
+            {/* Secondary Top Recommendations */}
+            {otherCandidates.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {otherCandidates.map((item, idx) => (
+                  <RevisionCard
+                    key={item.topic}
+                    item={item}
+                    rank={idx + 2}
+                    username={summary.username}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Compact Practice Activity Chart */}
         <section className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">

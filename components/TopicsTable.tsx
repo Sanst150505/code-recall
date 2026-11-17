@@ -52,7 +52,7 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
         <div className="relative flex-1 max-w-md">
           <input
             type="text"
-            placeholder="Search across 88 DSA topics..."
+            placeholder="Search active DSA topics (e.g., Dynamic Programming, Graph)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-3.5 py-2 rounded-xl text-xs bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:outline-hidden transition"
@@ -77,7 +77,7 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
           <div className="flex items-center gap-1.5 text-xs">
             <select
               value={sortBy}
-              onChange={(e: any) => setSortBy(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as "priority" | "solved" | "struggle" | "recency" | "alphabetical")}
               className="py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
             >
               <option value="priority">Priority Score (High to Low)</option>
@@ -93,7 +93,9 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
       {/* Topics Count Indicator */}
       <div className="flex items-center justify-between text-xs text-slate-500 px-1">
         <span>
-          Showing <strong className="text-slate-800">{filteredTopics.length}</strong> of {initialTopics.length} topics
+          Showing <strong className="text-slate-800">{filteredTopics.length}</strong> of{" "}
+          <strong className="text-slate-800">{initialTopics.length}</strong> practiced topics{" "}
+          <span className="text-slate-600">(from 88 supported LeetCode DSA categories)</span>
         </span>
         {search && (
           <button
@@ -118,8 +120,8 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
                 <th className="py-3.5 px-4">Attempts / Pass Rate</th>
                 <th className="py-3.5 px-4">Struggle</th>
                 <th className="py-3.5 px-4">Last Practiced</th>
-                <th className="py-3.5 px-4 text-center">30d / 90d / 365d</th>
-                <th className="py-3.5 px-4 text-right">Action</th>
+                <th className="py-3.5 px-4 text-center">30D / 90D / 365D</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-800">
@@ -129,7 +131,14 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
                 return (
                   <tr key={t.topic} className="hover:bg-slate-50 transition-colors group">
                     <td className="py-3.5 px-5 font-bold text-slate-900 whitespace-nowrap">
-                      {t.topic}
+                      <div>
+                        <span>{t.topic}</span>
+                        {t.reassessmentCount > 0 && (
+                          <span className="ml-2 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            Reassessed: {t.reassessmentCount}x
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td className="py-3.5 px-4 text-center">
@@ -175,7 +184,7 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
                     <td className="py-3.5 px-4 whitespace-nowrap text-slate-500">
                       {t.daysSinceLastPractice !== null ? (
                         <span>
-                          {t.daysSinceLastPractice}d ago
+                          {t.daysSinceLastPractice}D ago
                         </span>
                       ) : (
                         "—"
@@ -197,17 +206,19 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
                     </td>
 
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                      <Link
-                        href={
-                          userParam
-                            ? `/dashboard/history?topic=${encodeURIComponent(t.topic)}&user=${encodeURIComponent(userParam)}`
-                            : `/dashboard/history?topic=${encodeURIComponent(t.topic)}`
-                        }
-                        className="text-indigo-600 hover:text-indigo-800 font-medium p-1.5 hover:bg-indigo-50 rounded-lg inline-flex items-center transition"
-                        title="View submissions for this topic"
-                      >
-                        <span>History</span>
-                      </Link>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link
+                          href={
+                            userParam
+                              ? `/dashboard/history?topic=${encodeURIComponent(t.topic)}&user=${encodeURIComponent(userParam)}`
+                              : `/dashboard/history?topic=${encodeURIComponent(t.topic)}`
+                          }
+                          className="text-slate-600 hover:text-slate-900 font-medium px-2 py-1 hover:bg-slate-100 rounded-md transition text-xs"
+                          title="View submissions for this topic"
+                        >
+                          History
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 );

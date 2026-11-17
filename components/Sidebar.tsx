@@ -13,6 +13,7 @@ export function Sidebar({ username = "" }: SidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const userParam = searchParams.get("user")?.trim();
+  const effectiveUser = userParam || username;
 
   const handleClearUser = () => {
     try {
@@ -22,7 +23,7 @@ export function Sidebar({ username = "" }: SidebarProps) {
   };
 
   const buildHref = (path: string) => {
-    return userParam ? `${path}?user=${encodeURIComponent(userParam)}` : path;
+    return effectiveUser ? `${path}?user=${encodeURIComponent(effectiveUser)}` : path;
   };
 
   const navItems = [

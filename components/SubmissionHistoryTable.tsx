@@ -29,6 +29,18 @@ export function SubmissionHistoryTable() {
   const initialTopic = searchParams.get("topic") || "";
   const userParam = searchParams.get("user") || "";
 
+  const [storedUser] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    try {
+      return localStorage.getItem("code_recall_active_user")?.trim() || "";
+    } catch {
+      return "";
+    }
+  });
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const activeUser = userParam || storedUser;
+
   const [submissions, setSubmissions] = useState<SubmissionRow[]>([]);
   const [pagination, setPagination] = useState<PaginationInfo>({
     page: 1,
@@ -37,6 +49,7 @@ export function SubmissionHistoryTable() {
     totalPages: 1,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Filters state
   const [search, setSearch] = useState("");
@@ -45,34 +58,62 @@ export function SubmissionHistoryTable() {
   const [topic, setTopic] = useState(initialTopic);
   const [page, setPage] = useState(1);
 
-  const fetchSubmissions = useCallback(async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams();
-      params.set("page", page.toString());
-      params.set("pageSize", "20");
-      if (userParam) params.set("username", userParam);
-      if (search) params.set("search", search);
-      if (status !== "All") params.set("status", status);
-      if (difficulty !== "All") params.set("difficulty", difficulty);
-      if (topic) params.set("topic", topic);
-
-      const res = await fetch(`/api/submissions?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to load submissions");
-      const data = await res.json();
-
-      setSubmissions(data.submissions);
-      setPagination(data.pagination);
-    } catch (err) {
-      console.error("Error fetching submissions:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, search, status, difficulty, topic, userParam]);
-
   useEffect(() => {
-    fetchSubmissions();
-  }, [fetchSubmissions]);
+    let ignore = false;
+    const userToFetch = activeUser;
+
+    if (!userToFetch) {
+      const timer = setTimeout(() => {
+        if (!ignore) {
+          setLoading(false);
+          setSubmissions([]);
+        }
+      }, 0);
+      return () => {
+        ignore = true;
+        clearTimeout(timer);
+      };
+    }
+
+    const params = new URLSearchParams();
+    params.set("page", page.toString());
+    params.set("pageSize", "20");
+    params.set("username", userToFetch);
+    if (search) params.set("search", search);
+    if (status !== "All") params.set("status", status);
+    if (difficulty !== "All") params.set("difficulty", difficulty);
+    if (topic) params.set("topic", topic);
+
+    fetch(`/api/submissions?${params.toString()}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load submissions");
+        return res.json();
+      })
+      .then((data) => {
+        if (!ignore) {
+          setSubmissions(data.submissions || []);
+          setPagination(data.pagination || { page: 1, pageSize: 20, total: 0, totalPages: 1 });
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (!ignore) {
+          console.error("Error fetching submissions:", err);
+          setError(err instanceof Error ? err.message : "Error loading records");
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [page, search, status, difficulty, topic, activeUser, reloadKey]);
+
+  const handleRetry = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    setReloadKey((k) => k + 1);
+  }, []);
 
   // Difficulty badge styling
   const diffBadge = (diff: string) => {
@@ -201,6 +242,18 @@ export function SubmissionHistoryTable() {
             Loading records...
           </span>
         )}
+
+        {error && (
+          <div className="flex items-center gap-2 text-rose-600 text-xs font-medium">
+            <span>{error}</span>
+            <button
+              onClick={handleRetry}
+              className="text-xs underline hover:text-rose-800 cursor-pointer"
+            >
+              Retry
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Submissions Table */}
@@ -220,6 +273,23 @@ export function SubmissionHistoryTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-800">
+              {loading && submissions.length === 0 && (
+                <>
+                  {[...Array(5)].map((_, idx) => (
+                    <tr key={`skel-${idx}`} className="animate-pulse">
+                      <td className="py-3.5 px-5"><div className="h-4 bg-slate-100 rounded w-40"></div></td>
+                      <td className="py-3.5 px-4"><div className="h-4 bg-slate-100 rounded w-16"></div></td>
+                      <td className="py-3.5 px-4"><div className="h-4 bg-slate-100 rounded w-20"></div></td>
+                      <td className="py-3.5 px-4"><div className="h-4 bg-slate-100 rounded w-32"></div></td>
+                      <td className="py-3.5 px-4"><div className="h-4 bg-slate-100 rounded w-14"></div></td>
+                      <td className="py-3.5 px-4"><div className="h-4 bg-slate-100 rounded w-20"></div></td>
+                      <td className="py-3.5 px-4"><div className="h-4 bg-slate-100 rounded w-28"></div></td>
+                      <td className="py-3.5 px-4 text-right"><div className="h-4 bg-slate-100 rounded w-10 ml-auto"></div></td>
+                    </tr>
+                  ))}
+                </>
+              )}
+
               {submissions.map((sub) => {
                 const subDate = new Date(sub.submittedAt);
                 const formattedDate = subDate.toLocaleDateString("en-US", {
@@ -302,9 +372,38 @@ export function SubmissionHistoryTable() {
               {!loading && submissions.length === 0 && (
                 <tr>
                   <td colSpan={8} className="py-12 text-center text-xs text-slate-500">
-                    {!userParam
-                      ? "No profile active. Please select a profile from Home or sync with the CodeRecall extension."
-                      : "No submissions found matching your active filter criteria."}
+                    {!activeUser ? (
+                      <div className="space-y-2 max-w-sm mx-auto">
+                        <p className="font-semibold text-slate-700">No profile active</p>
+                        <p className="text-[11px] text-slate-500">
+                          Please select the demo persona or sync your LeetCode account with the extension.
+                        </p>
+                        <a
+                          href="/dashboard?user=demo"
+                          className="inline-block px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition"
+                        >
+                          Load Demo Profile
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <p>No submissions found matching your active filter criteria.</p>
+                        {(search || status !== "All" || difficulty !== "All" || topic) && (
+                          <button
+                            onClick={() => {
+                              setSearch("");
+                              setStatus("All");
+                              setDifficulty("All");
+                              setTopic("");
+                              setPage(1);
+                            }}
+                            className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 underline cursor-pointer"
+                          >
+                            Reset all filters
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </td>
                 </tr>
               )}

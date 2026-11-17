@@ -6,6 +6,7 @@ interface MetricCardProps {
   subtitle?: string;
   badge?: string;
   badgeVariant?: "neutral" | "emerald" | "amber" | "indigo" | "rose";
+  tooltip?: string;
   icon?: ReactNode;
   iconBg?: string;
 }
@@ -16,6 +17,7 @@ export function MetricCard({
   subtitle,
   badge,
   badgeVariant = "neutral",
+  tooltip,
   icon,
   iconBg = "bg-indigo-50 text-indigo-600 border-indigo-100",
 }: MetricCardProps) {
@@ -31,7 +33,17 @@ export function MetricCard({
     <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs hover:shadow-md transition-all group">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs font-semibold text-slate-600 tracking-wide uppercase">{title}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs font-semibold text-slate-600 tracking-wide uppercase">{title}</p>
+            {tooltip && (
+              <span
+                className="text-[10px] text-slate-600 hover:text-slate-800 cursor-help"
+                title={tooltip}
+              >
+                [?]
+              </span>
+            )}
+          </div>
           <div className="flex items-baseline gap-2.5 mt-2">
             <span className="text-2xl font-bold tracking-tight text-slate-900">{value}</span>
             {badge && (

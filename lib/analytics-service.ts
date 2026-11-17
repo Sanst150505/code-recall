@@ -11,6 +11,14 @@ export interface TopicExposureWindow {
   attemptCount: number;
 }
 
+export interface SolvedProblemMeta {
+  id: number;
+  slug: string;
+  title: string;
+  difficulty: string;
+  lastSubmittedAt: string;
+}
+
 export interface TopicAnalytics {
   topic: string;
   uniqueSolved: number;
@@ -43,6 +51,10 @@ export interface TopicAnalytics {
   category: RecommendationCategory;
   explanation: string;
   recommendedAction: string;
+  solvedProblems: SolvedProblemMeta[];
+  reassessmentCount: number;
+  lastRevisedAt: string | null;
+  lastOutcome: "INDEPENDENT" | "WITH_HINTS" | "COULD_NOT_SOLVE" | null;
 }
 
 export interface OverallAnalyticsSummary {
@@ -65,6 +77,8 @@ export interface OverallAnalyticsSummary {
   };
   categoryCounts: Record<RecommendationCategory, number>;
   totalTopics: number;
+  totalSupportedTopics: number;
+  totalRevisionsCompleted: number;
   topRevisionCandidates: TopicAnalytics[];
   topics: TopicAnalytics[];
 }
@@ -106,19 +120,43 @@ export async function calculateHistoricalAnalytics(
         ACTIVE_MAINTAINED: 0,
       },
       totalTopics: 0,
+      totalSupportedTopics: 88,
+      totalRevisionsCompleted: 0,
       topRevisionCandidates: [],
       topics: [],
     };
   }
 
-  // 2. Fetch all historical submissions with problem details for this user
-  const submissions = await prisma.submission.findMany({
-    where: { userId: user.id },
-    include: {
-      problem: true,
-    },
-    orderBy: { submittedAt: "asc" },
-  });
+  // 2. Fetch all historical submissions with problem details AND user revision records
+  const [submissions, revisionRecords] = await Promise.all([
+    prisma.submission.findMany({
+      where: { userId: user.id },
+      include: {
+        problem: true,
+      },
+      orderBy: { submittedAt: "asc" },
+    }),
+    prisma.revisionRecord.findMany({
+      where: { userId: user.id },
+      orderBy: { revisedAt: "desc" },
+    }),
+  ]);
+
+  const revisionByTopic = new Map<
+    string,
+    { count: number; lastRevisedAt: string; lastOutcome: "INDEPENDENT" | "WITH_HINTS" | "COULD_NOT_SOLVE" | null }
+  >();
+
+  for (const rev of revisionRecords) {
+    if (!revisionByTopic.has(rev.topic)) {
+      revisionByTopic.set(rev.topic, {
+        count: 0,
+        lastRevisedAt: rev.revisedAt.toISOString(),
+        lastOutcome: rev.outcome as "INDEPENDENT" | "WITH_HINTS" | "COULD_NOT_SOLVE",
+      });
+    }
+    revisionByTopic.get(rev.topic)!.count++;
+  }
 
   const now = nowReference;
   const nowMs = now.getTime();
@@ -133,6 +171,7 @@ export async function calculateHistoricalAnalytics(
   const globalAttemptedProblemIds = new Set<number>();
   const globalSolvedProblemIds = new Set<number>();
   const problemDifficultyMap = new Map<number, string>();
+  const problemMetaMap = new Map<number, SolvedProblemMeta>();
   const activeDaysSet = new Set<string>();
 
   let globalAcceptedCount = 0;
@@ -174,6 +213,13 @@ export async function calculateHistoricalAnalytics(
     if (isAccepted) {
       globalSolvedProblemIds.add(pId);
       globalAcceptedCount++;
+      problemMetaMap.set(pId, {
+        id: pId,
+        slug: sub.problem.slug,
+        title: sub.problem.title,
+        difficulty: sub.problem.difficulty,
+        lastSubmittedAt: subTime.toISOString(),
+      });
     }
 
     if (!earliestSubDate || subTime < earliestSubDate) {
@@ -373,6 +419,13 @@ export async function calculateHistoricalAnalytics(
       )
     );
 
+    const solvedProblems = Array.from(acc.solvedProblemIds)
+      .map((id) => problemMetaMap.get(id)!)
+      .filter(Boolean)
+      .sort((a, b) => new Date(b.lastSubmittedAt).getTime() - new Date(a.lastSubmittedAt).getTime());
+
+    const revInfo = revisionByTopic.get(acc.topic);
+
     analyticsList.push({
       topic: acc.topic,
       uniqueSolved,
@@ -412,6 +465,10 @@ export async function calculateHistoricalAnalytics(
       category,
       explanation,
       recommendedAction,
+      solvedProblems,
+      reassessmentCount: revInfo?.count ?? 0,
+      lastRevisedAt: revInfo?.lastRevisedAt ?? null,
+      lastOutcome: revInfo?.lastOutcome ?? null,
     });
   }
 
@@ -462,6 +519,8 @@ export async function calculateHistoricalAnalytics(
     },
     categoryCounts,
     totalTopics: analyticsList.length,
+    totalSupportedTopics: 88,
+    totalRevisionsCompleted: revisionRecords.length,
     topRevisionCandidates: analyticsList.slice(0, 10),
     topics: analyticsList,
   };

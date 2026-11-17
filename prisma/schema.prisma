@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
-  username       String          @unique
-  lastSyncedAt   DateTime?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  submissions    Submission[]
-  syncCheckpoint SyncCheckpoint?
+  id              Int              @id @default(autoincrement())
+  username        String           @unique
+  lastSyncedAt    DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  submissions     Submission[]
+  syncCheckpoint  SyncCheckpoint?
+  revisionRecords RevisionRecord[]
 }
 
 model Problem {
@@ -61,4 +62,19 @@ model SyncCheckpoint {
   updatedAt             DateTime  @updatedAt
 
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RevisionRecord {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  topic       String
+  problemSlug String?
+  outcome     String   // "INDEPENDENT" | "WITH_HINTS" | "COULD_NOT_SOLVE"
+  notes       String?
+  revisedAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, topic])
+  @@index([userId, revisedAt])
 }

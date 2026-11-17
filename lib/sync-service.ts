@@ -332,10 +332,9 @@ async function syncAuthenticatedUser(
     const knownBoundaryTime = checkpoint.newestSubmissionTime;
     const knownBoundaryId = checkpoint.newestSubmissionId;
 
-    let hasNext = true;
     let hitBoundary = false;
 
-    while (hasNext && !hitBoundary) {
+    while (!hitBoundary) {
       const page = await getAuthenticatedSubmissions(session, csrf, offset, PAGE_SIZE);
       pagesFetched++;
       const submissions = page.submissions;

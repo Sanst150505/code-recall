@@ -50,7 +50,10 @@ export function DifficultyDonutChart({ easy, medium, hard }: DifficultyChartProp
             ))}
           </Pie>
           <Tooltip
-            formatter={(value: any, name: any) => [`${value} problems (${total > 0 ? ((Number(value) / total) * 100).toFixed(1) : 0}%)`, name]}
+            formatter={(value: unknown, name: unknown) => [
+              `${String(value)} problems (${total > 0 ? ((Number(value) / total) * 100).toFixed(1) : 0}%)`,
+              String(name),
+            ]}
             contentStyle={{ backgroundColor: "#0f172a", borderRadius: "8px", border: "none", color: "#fff", fontSize: "12px" }}
           />
         </PieChart>
@@ -158,7 +161,7 @@ export function TopTopicsBarChart({ data }: { data: TopicBarItem[] }) {
         <BarChart
           data={data}
           layout="vertical"
-          margin={{ top: 5, right: 20, left: 40, bottom: 5 }}
+          margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
           <XAxis type="number" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
@@ -168,7 +171,7 @@ export function TopTopicsBarChart({ data }: { data: TopicBarItem[] }) {
             stroke="#64748b"
             fontSize={11}
             tickLine={false}
-            width={90}
+            width={135}
           />
           <Tooltip
             contentStyle={{ backgroundColor: "#0f172a", borderRadius: "8px", border: "none", color: "#fff", fontSize: "12px" }}
