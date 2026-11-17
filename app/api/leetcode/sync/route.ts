@@ -18,11 +18,25 @@ export async function POST(request: NextRequest) {
       username = request.nextUrl.searchParams.get("username")?.trim() || "";
     }
 
-    if (!username) {
+    if (!username || username === "anonymous") {
       return NextResponse.json(
-        { error: "Username is required in request body or query parameter" },
+        { error: "Please connect a LeetCode username first." },
         { status: 400 }
       );
+    }
+
+    if (username.toLowerCase() === "demo") {
+      return NextResponse.json({
+        success: true,
+        mode: "demo",
+        username: "demo",
+        message: "Demo profile is simulated and up to date.",
+        stats: {
+          submissionsProcessed: 0,
+          newSubmissionsSaved: 0,
+        },
+        timestamp: new Date().toISOString(),
+      });
     }
 
     // Credentials accessed strictly server-side from local environment variables

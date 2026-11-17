@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   title: string;
@@ -17,11 +18,19 @@ export function Header({
   lastSyncedAt,
   onSyncComplete,
 }: HeaderProps) {
+  const router = useRouter();
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState<"idle" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState("");
 
   const handleSync = async () => {
+    if (!username || username === "anonymous") {
+      setSyncStatus("error");
+      setStatusMessage("Please connect a LeetCode username first");
+      setTimeout(() => setSyncStatus("idle"), 4000);
+      return;
+    }
+
     try {
       setIsSyncing(true);
       setSyncStatus("idle");
@@ -40,13 +49,17 @@ export function Header({
 
       setSyncStatus("success");
       setStatusMessage(
-        data.stats
+        data.message
+          ? data.message
+          : data.stats
           ? `Synced ${data.stats.submissionsProcessed} submissions`
           : "Sync complete"
       );
 
       if (onSyncComplete) {
         onSyncComplete();
+      } else {
+        router.refresh();
       }
 
       setTimeout(() => {

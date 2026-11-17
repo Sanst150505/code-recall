@@ -162,10 +162,34 @@ async function ensureProblemsExist(
 export async function syncLeetCodeData(options: SyncOptions): Promise<SyncResult> {
   const { username, session, csrf, forceFullSync } = options;
 
-  if (session && session.trim().length > 0) {
-    return syncAuthenticatedUser(username, session.trim(), csrf?.trim(), forceFullSync);
+  if (username.toLowerCase() === "demo") {
+    return {
+      success: true,
+      mode: "public_recent",
+      username: "demo",
+      stats: {
+        isInitialSyncComplete: true,
+        pagesFetched: 0,
+        submissionsProcessed: 0,
+        newSubmissionsSaved: 0,
+        duplicatesSkipped: 0,
+        uniqueProblemsHandled: 0,
+      },
+      timestamp: new Date().toISOString(),
+    };
   }
 
+  if (session && session.trim().length > 0) {
+    try {
+      return await syncAuthenticatedUser(username, session.trim(), csrf?.trim(), forceFullSync);
+    } catch (authError) {
+      console.warn(
+        `Authenticated sync failed for "${username}" (${authError instanceof Error ? authError.message : authError}), falling back to public sync.`
+      );
+    }
+  }
+
+  // Graceful fallback to public submission sync
   return syncPublicUser(username);
 }
 
@@ -517,6 +541,19 @@ async function syncPublicUser(username: string): Promise<SyncResult> {
     });
     newSaved = insertRes.count;
   }
+
+  // Update checkpoint timestamp
+  await prisma.syncCheckpoint.upsert({
+    where: { userId: user.id },
+    update: {
+      lastSyncedAt: new Date(),
+    },
+    create: {
+      userId: user.id,
+      isInitialSyncComplete: true,
+      lastSyncedAt: new Date(),
+    },
+  });
 
   return {
     success: true,
