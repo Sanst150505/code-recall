@@ -217,7 +217,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             title="Problems Solved"
             value={summary.totalUniqueProblemsSolved}
             subtitle={`${summary.totalUniqueProblemsAttempted} attempted across ${summary.totalTopics} active topics`}
-            badge={`${summary.difficultySolved.easy}E · ${summary.difficultySolved.medium}M · ${summary.difficultySolved.hard}H`}
+            badge={`${summary.difficultySolved.easy} Easy · ${summary.difficultySolved.medium} Med · ${summary.difficultySolved.hard} Hard`}
             badgeVariant="indigo"
             tooltip="Deduplicated count of unique problems solved across all ingested submissions"
           />

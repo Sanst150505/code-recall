@@ -180,7 +180,7 @@ export function RevisionCard({
             <strong className="text-slate-900">{item.uniqueSolved}</strong> solved
             {item.uniqueSolved > 0 && (
               <span className="text-slate-600 text-[10px] ml-1">
-                ({item.difficulty.easy}E / {item.difficulty.medium}M / {item.difficulty.hard}H)
+                ({item.difficulty.easy} Easy · {item.difficulty.medium} Med · {item.difficulty.hard} Hard)
               </span>
             )}
           </span>

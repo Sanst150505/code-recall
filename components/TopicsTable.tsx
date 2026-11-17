@@ -156,7 +156,7 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <span className="font-bold text-slate-900">{t.uniqueSolved}</span>
                       <span className="text-[11px] text-slate-600 font-medium ml-1.5">
-                        ({t.difficulty.easy}E / {t.difficulty.medium}M / {t.difficulty.hard}H)
+                        ({t.difficulty.easy} Easy · {t.difficulty.medium} Med · {t.difficulty.hard} Hard)
                       </span>
                     </td>
 
