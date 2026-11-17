@@ -72,7 +72,7 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
           <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
-                Sample Sandbox Persona:
+                Sample Profile Preview:
               </strong>
               <span>
                 Demonstrating skill assessment across {summary.totalTopics} active DSA topics out of 88 supported LeetCode categories.

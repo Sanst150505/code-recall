@@ -70,6 +70,7 @@ model RevisionRecord {
   topic       String
   problemSlug String?
   outcome     String   // "INDEPENDENT" | "WITH_HINTS" | "COULD_NOT_SOLVE"
+  verified    Boolean  @default(false)
   notes       String?
   revisedAt   DateTime @default(now())
 

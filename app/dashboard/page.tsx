@@ -169,7 +169,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="text-indigo-950">
               <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
-                Sample Sandbox Persona:
+                Sample Profile Preview:
               </strong>
               <span>
                 Simulated 9-month LeetCode journey. All retention decay, attempt friction, and spaced-repetition queues are computed live by the CodeRecall analytics engine.

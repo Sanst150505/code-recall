@@ -21,6 +21,16 @@ export function RevisionCard({
 }: RevisionCardProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [selectedProblemSlug, setSelectedProblemSlug] = useState<string>(
+    item.solvedProblems[0]?.slug || ""
+  );
+  const [verificationResult, setVerificationResult] = useState<{
+    verified: boolean;
+    message: string;
+    title?: string;
+  } | null>(null);
+
   const [successFeedback, setSuccessFeedback] = useState<string | null>(null);
   const [localReassessmentCount, setLocalReassessmentCount] = useState(item.reassessmentCount || 0);
   const [localLastOutcome, setLocalLastOutcome] = useState<string | null>(item.lastOutcome || null);
@@ -58,6 +68,34 @@ export function RevisionCard({
 
   const config = categoryConfig[item.category];
 
+  const handleVerify = async () => {
+    if (!username || !selectedProblemSlug) return;
+    try {
+      setIsVerifying(true);
+      setVerificationResult(null);
+
+      const res = await fetch("/api/revision/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          problemSlug: selectedProblemSlug,
+          topic: item.topic,
+        }),
+      });
+
+      const data = await res.json();
+      setVerificationResult(data);
+    } catch (err) {
+      setVerificationResult({
+        verified: false,
+        message: err instanceof Error ? err.message : "Network error verifying submission with LeetCode",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   const handleLogRevision = async (outcome: "INDEPENDENT" | "WITH_HINTS" | "COULD_NOT_SOLVE") => {
     if (!username) return;
     try {
@@ -69,7 +107,9 @@ export function RevisionCard({
         body: JSON.stringify({
           username,
           topic: item.topic,
+          problemSlug: selectedProblemSlug || null,
           outcome,
+          verified: verificationResult?.verified ?? false,
         }),
       });
 
@@ -79,9 +119,9 @@ export function RevisionCard({
       setLocalLastOutcome(outcome);
       setSuccessFeedback(
         outcome === "INDEPENDENT"
-          ? "Recorded: Solved independently!"
+          ? "Verified & Recorded: Solved independently! Queue updated."
           : outcome === "WITH_HINTS"
-          ? "Recorded: Solved with hints!"
+          ? "Verified & Recorded: Solved with hints! Queue updated."
           : "Recorded: Marked for further review."
       );
 
@@ -92,7 +132,8 @@ export function RevisionCard({
       setTimeout(() => {
         setIsDrawerOpen(false);
         setSuccessFeedback(null);
-      }, 2000);
+        setVerificationResult(null);
+      }, 2200);
     } catch (err) {
       console.error("Error logging revision:", err);
     } finally {
@@ -255,50 +296,155 @@ export function RevisionCard({
           </div>
         )}
 
-        {/* Interactive Reassessment Drawer */}
+        {/* Interactive LeetCode Verification Drawer */}
         {isDrawerOpen && (
-          <div className="mt-3 p-3.5 rounded-xl bg-slate-900 text-white text-xs space-y-3">
+          <div className="mt-3 p-4 rounded-xl bg-slate-900 text-white text-xs space-y-3.5 border border-slate-800">
             <div>
-              <p className="font-semibold text-white">Record Reassessment Outcome</p>
-              <p className="text-[11px] text-slate-300 mt-0.5">
-                Practice a problem from this topic on LeetCode, then select your performance outcome:
+              <div className="flex items-center justify-between">
+                <p className="font-semibold text-white">Live LeetCode Revision & Verification</p>
+                <span className="text-[10px] text-indigo-300 bg-indigo-950/80 border border-indigo-700/60 px-2 py-0.5 rounded-full font-medium">
+                  Verified Tracking
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 mt-1">
+                Select a problem, solve it on LeetCode, and verify your Accepted verdict to update your retention schedule:
               </p>
             </div>
 
-            {successFeedback ? (
-              <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-semibold text-center text-xs">
-                {successFeedback}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <button
-                  onClick={() => handleLogRevision("INDEPENDENT")}
-                  disabled={isSubmitting}
-                  className="px-2.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs text-center transition cursor-pointer disabled:opacity-50"
-                >
-                  Solved Independently
-                </button>
-                <button
-                  onClick={() => handleLogRevision("WITH_HINTS")}
-                  disabled={isSubmitting}
-                  className="px-2.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium text-xs text-center transition cursor-pointer disabled:opacity-50"
-                >
-                  Solved with Hints
-                </button>
-                <button
-                  onClick={() => handleLogRevision("COULD_NOT_SOLVE")}
-                  disabled={isSubmitting}
-                  className="px-2.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs text-center transition cursor-pointer disabled:opacity-50"
-                >
-                  Couldn&apos;t Solve
-                </button>
+            {/* Problem selector */}
+            {item.solvedProblems.length > 0 && (
+              <div className="space-y-1.5">
+                <label className="text-[11px] text-slate-400 font-medium">1. Select Target Problem:</label>
+                <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
+                  {item.solvedProblems.map((prob) => {
+                    const isSelected = selectedProblemSlug === prob.slug;
+                    return (
+                      <button
+                        key={prob.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedProblemSlug(prob.slug);
+                          setVerificationResult(null);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 border ${
+                          isSelected
+                            ? "bg-indigo-600 text-white border-indigo-400 shadow-xs"
+                            : "bg-slate-800/80 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+                        }`}
+                      >
+                        <span className="truncate max-w-[140px]">{prob.title}</span>
+                        <span className="text-[9px] opacity-75 font-semibold">({prob.difficulty[0]})</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
-            <div className="flex justify-end">
+            {/* Target problem action bar */}
+            {selectedProblemSlug && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-800/70 border border-slate-700">
+                <div className="text-[11px] text-slate-300 truncate">
+                  Target: <span className="text-white font-semibold">{selectedProblemSlug}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href={`https://leetcode.com/problems/${selectedProblemSlug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-700 hover:bg-slate-600 text-white transition flex items-center gap-1"
+                  >
+                    <span>Solve on LeetCode</span>
+                    <span className="text-[10px]">↗</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={handleVerify}
+                    disabled={isVerifying}
+                    className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-indigo-500 hover:bg-indigo-400 active:scale-95 text-white transition disabled:opacity-50 cursor-pointer"
+                  >
+                    {isVerifying ? "Checking LeetCode..." : "Verify Submission"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Verification Status Feedback */}
+            {verificationResult && (
+              <div
+                className={`p-2.5 rounded-lg text-[11px] border leading-relaxed ${
+                  verificationResult.verified
+                    ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-200"
+                    : "bg-rose-950/60 border-rose-500/40 text-rose-200"
+                }`}
+              >
+                <div className="font-semibold flex items-center gap-1.5">
+                  {verificationResult.verified ? (
+                    <>
+                      <span>✓</span>
+                      <span>LeetCode Verified: Accepted Submission Detected</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>✕</span>
+                      <span>Verification Check</span>
+                    </>
+                  )}
+                </div>
+                <p className="mt-0.5 opacity-90">{verificationResult.message}</p>
+              </div>
+            )}
+
+            {/* Outcome Selection Buttons (Unlocked on Verification) */}
+            {successFeedback ? (
+              <div className="p-2.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-semibold text-center text-xs">
+                {successFeedback}
+              </div>
+            ) : verificationResult?.verified ? (
+              <div className="space-y-1.5 pt-1 border-t border-slate-800">
+                <p className="text-[11px] text-slate-300">
+                  How was your recall during this solve? Select outcome to update your retention schedule:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button
+                    onClick={() => handleLogRevision("INDEPENDENT")}
+                    disabled={isSubmitting}
+                    className="px-2.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs text-center transition cursor-pointer disabled:opacity-50"
+                  >
+                    Solved Independently
+                    <span className="block text-[10px] opacity-80 font-normal">Reset decay to 0D</span>
+                  </button>
+                  <button
+                    onClick={() => handleLogRevision("WITH_HINTS")}
+                    disabled={isSubmitting}
+                    className="px-2.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium text-xs text-center transition cursor-pointer disabled:opacity-50"
+                  >
+                    Solved with Hints
+                    <span className="block text-[10px] opacity-80 font-normal">Partial decay reduction</span>
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {/* Couldn't Solve option & close */}
+            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
               <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="text-[11px] text-slate-400 hover:text-white transition cursor-pointer"
+                type="button"
+                onClick={() => handleLogRevision("COULD_NOT_SOLVE")}
+                disabled={isSubmitting}
+                className="text-rose-400 hover:text-rose-300 transition underline cursor-pointer disabled:opacity-50"
+              >
+                I struggled and couldn&apos;t solve it
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDrawerOpen(false);
+                  setVerificationResult(null);
+                }}
+                className="text-slate-400 hover:text-white transition cursor-pointer"
               >
                 Close
               </button>

@@ -320,9 +320,30 @@ export async function calculateHistoricalAnalytics(
       ? Math.round((acceptedAttempts / totalAttempts) * 1000) / 10
       : null;
 
-    // Days since last practice
-    const daysSinceLastPractice = acc.lastPracticed
-      ? Math.max(0, Math.floor((nowMs - acc.lastPracticed.getTime()) / (1000 * 60 * 60 * 24)))
+    // Days since last practice (incorporating verified revision records)
+    const revInfo = revisionByTopic.get(acc.topic);
+    let effectiveLastPracticed = acc.lastPracticed;
+
+    if (revInfo && revInfo.lastRevisedAt) {
+      const revDate = new Date(revInfo.lastRevisedAt);
+      if (!effectiveLastPracticed || revDate > effectiveLastPracticed) {
+        if (revInfo.lastOutcome === "INDEPENDENT") {
+          // Solved independently resets retention decay completely to the revision timestamp
+          effectiveLastPracticed = revDate;
+        } else if (revInfo.lastOutcome === "WITH_HINTS") {
+          // Solved with hints cuts elapsed retention decay in half
+          if (effectiveLastPracticed) {
+            const originalElapsed = nowMs - effectiveLastPracticed.getTime();
+            effectiveLastPracticed = new Date(nowMs - Math.floor(originalElapsed * 0.4));
+          } else {
+            effectiveLastPracticed = revDate;
+          }
+        }
+      }
+    }
+
+    const daysSinceLastPractice = effectiveLastPracticed
+      ? Math.max(0, Math.floor((nowMs - effectiveLastPracticed.getTime()) / (1000 * 60 * 60 * 24)))
       : null;
 
     // Historical depth vs recent practice
@@ -365,6 +386,11 @@ export async function calculateHistoricalAnalytics(
       frictionFactor = Math.min(100, Math.max(0, Math.round((struggleRatio - 1.0) * 40)));
     }
 
+    // Boost friction if the latest revision was a struggle
+    if (revInfo?.lastOutcome === "COULD_NOT_SOLVE") {
+      frictionFactor = Math.min(100, frictionFactor + 35);
+    }
+
     // 5. Categorize Revision Recommendations with transparent explanations
     let category: RecommendationCategory = "ACTIVE_MAINTAINED";
     let explanation = "";
@@ -372,7 +398,11 @@ export async function calculateHistoricalAnalytics(
 
     const daysText = daysSinceLastPractice !== null ? `${daysSinceLastPractice} days` : "never";
 
-    if (
+    if (revInfo?.lastOutcome === "COULD_NOT_SOLVE") {
+      category = "HIGH_FRICTION";
+      explanation = `Unresolved difficulty on recent reassessment. Algorithmic patterns and edge cases require immediate reinforcement.`;
+      recommendedAction = `Review the optimal approach breakdown and re-implement the pattern from scratch.`;
+    } else if (
       (uniqueSolved >= 5 || difficulty.medium + difficulty.hard >= 2) &&
       daysSinceLastPractice !== null &&
       daysSinceLastPractice >= 90
@@ -385,7 +415,7 @@ export async function calculateHistoricalAnalytics(
       explanation = `Low total problem volume (${uniqueSolved} problem${uniqueSolved === 1 ? "" : "s"} solved all-time). Concept exposure deficit.`;
       recommendedAction = `Practice 3-5 foundational Easy and Medium problems to build essential conceptual confidence.`;
     } else if (
-      (struggleRatio >= 2.5 || (passRate !== null && passRate < 55)) &&
+      (struggleRatio >= 2.5 || (passRate !== null && passRate < 55) || frictionFactor >= 50) &&
       (daysSinceLastPractice !== null && daysSinceLastPractice >= 14)
     ) {
       category = "HIGH_FRICTION";
@@ -393,8 +423,13 @@ export async function calculateHistoricalAnalytics(
       recommendedAction = `Re-attempt similar problem variants to reinforce problem-solving intuition and execution fluency.`;
     } else {
       category = "ACTIVE_MAINTAINED";
-      explanation = `Practiced recently (${daysText} ago, ${acc.solvedW30.size} solved in the last 30 days). Skills are actively maintained.`;
-      recommendedAction = `Maintain your current practice cadence; no urgent revision needed.`;
+      if (revInfo?.lastOutcome === "INDEPENDENT" && daysSinceLastPractice !== null && daysSinceLastPractice < 14) {
+        explanation = `Reassessed and solved independently on LeetCode (${daysText} ago). Retention refreshed and actively maintained.`;
+        recommendedAction = `Concept verified fresh. No urgent revision needed.`;
+      } else {
+        explanation = `Practiced recently (${daysText} ago, ${acc.solvedW30.size} solved in the last 30 days). Skills are actively maintained.`;
+        recommendedAction = `Maintain your current practice cadence; no urgent revision needed.`;
+      }
     }
 
     // Weighted Priority Score: 45% Decay + 35% Volume Deficit + 20% Friction
@@ -423,8 +458,6 @@ export async function calculateHistoricalAnalytics(
       .map((id) => problemMetaMap.get(id)!)
       .filter(Boolean)
       .sort((a, b) => new Date(b.lastSubmittedAt).getTime() - new Date(a.lastSubmittedAt).getTime());
-
-    const revInfo = revisionByTopic.get(acc.topic);
 
     analyticsList.push({
       topic: acc.topic,

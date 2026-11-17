@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, topic, problemSlug, outcome, notes } = body;
+    const { username, topic, problemSlug, outcome, verified, notes } = body;
 
     if (!username || !topic || !outcome) {
       return NextResponse.json(
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
         topic: topic.trim(),
         problemSlug: problemSlug?.trim() || null,
         outcome,
+        verified: Boolean(verified),
         notes: notes?.trim() || null,
       },
     });
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
         topic: record.topic,
         problemSlug: record.problemSlug,
         outcome: record.outcome,
+        verified: record.verified,
         revisedAt: record.revisedAt.toISOString(),
       },
     });

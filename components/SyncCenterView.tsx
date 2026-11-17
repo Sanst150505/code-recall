@@ -100,7 +100,7 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
                   </a>
                 ) : (
                   <span className="text-xs text-slate-500 font-medium bg-slate-100 px-2 py-0.5 rounded-md">
-                    Demo Sandbox
+                    Demo Profile
                   </span>
                 )}
               </div>

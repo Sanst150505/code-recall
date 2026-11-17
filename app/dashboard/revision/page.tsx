@@ -65,7 +65,7 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
           <div className="p-3.5 rounded-xl bg-indigo-50/80 border border-indigo-200 text-xs text-indigo-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <strong className="font-semibold text-indigo-900 block sm:inline mr-2">
-                Sample Sandbox Persona:
+                Sample Profile Preview:
               </strong>
               <span>
                 Demonstrating 5 critical decay topics (practiced 90+ days ago) and 1 high-friction graph topic.

@@ -100,8 +100,8 @@ export function Sidebar({ username = "" }: SidebarProps) {
                 Disconnect
               </button>
             </div>
-            <div className="mt-2 pt-2 border-t border-slate-800/60 text-right">
-              {userParam !== "demo" ? (
+            {userParam !== "demo" && (
+              <div className="mt-2 pt-2 border-t border-slate-800/60 text-right">
                 <a
                   href={`https://leetcode.com/${userParam}`}
                   target="_blank"
@@ -110,12 +110,8 @@ export function Sidebar({ username = "" }: SidebarProps) {
                 >
                   View LeetCode Profile
                 </a>
-              ) : (
-                <span className="text-[10px] text-slate-500">
-                  Demo Sandbox Mode
-                </span>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-2">
