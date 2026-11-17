@@ -94,13 +94,13 @@ export function Header({
 
       <div className="flex items-center gap-3">
         {syncStatus === "success" && (
-          <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md font-medium">
+          <span className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md font-medium max-w-sm truncate" title={statusMessage}>
             {statusMessage}
           </span>
         )}
 
         {syncStatus === "error" && (
-          <span className="text-xs text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md font-medium">
+          <span className="text-xs text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-md font-medium max-w-sm truncate" title={statusMessage}>
             {statusMessage}
           </span>
         )}
@@ -114,8 +114,9 @@ export function Header({
           onClick={handleSync}
           disabled={isSyncing}
           className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 hover:text-slate-900 disabled:opacity-50 transition cursor-pointer border border-slate-300"
+          title="Quick sync recent solves (last 20). For full history and struggle friction, sync via CodeRecall Extension."
         >
-          <span>{isSyncing ? "Syncing..." : "Sync"}</span>
+          <span>{isSyncing ? "Syncing..." : "Quick Sync"}</span>
         </button>
       </div>
     </header>

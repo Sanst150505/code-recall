@@ -20,6 +20,8 @@ export interface SyncResult {
   success: boolean;
   mode: "authenticated_historical" | "public_recent";
   username: string;
+  hasGap?: boolean;
+  message?: string;
   stats: {
     isInitialSyncComplete: boolean;
     pagesFetched: number;
@@ -543,22 +545,62 @@ async function syncPublicUser(username: string): Promise<SyncResult> {
   }
 
   // Update checkpoint timestamp
+  const checkpoint = await prisma.syncCheckpoint.findUnique({
+    where: { userId: user.id },
+  });
+
+  let hasGap = false;
+  let newestSubTime = checkpoint?.newestSubmissionTime ?? null;
+  let oldestSubTime = checkpoint?.oldestSubmissionTime ?? null;
+
+  if (submissions.length > 0) {
+    const dates = submissions.map((s) => parseTimestamp(s.timestamp));
+    const batchNewest = new Date(Math.max(...dates.map((d) => d.getTime())));
+    const batchOldest = new Date(Math.min(...dates.map((d) => d.getTime())));
+
+    // If we had an earlier checkpoint and received 20 submissions, check if intermediate solves were missed
+    if (checkpoint?.newestSubmissionTime && submissions.length >= 20) {
+      if (batchOldest.getTime() > checkpoint.newestSubmissionTime.getTime()) {
+        hasGap = true;
+      }
+    }
+
+    if (!newestSubTime || batchNewest.getTime() > newestSubTime.getTime()) {
+      newestSubTime = batchNewest;
+    }
+    if (!oldestSubTime || batchOldest.getTime() < oldestSubTime.getTime()) {
+      oldestSubTime = batchOldest;
+    }
+  }
+
   await prisma.syncCheckpoint.upsert({
     where: { userId: user.id },
     update: {
       lastSyncedAt: new Date(),
+      newestSubmissionTime: newestSubTime,
+      oldestSubmissionTime: oldestSubTime,
     },
     create: {
       userId: user.id,
       isInitialSyncComplete: true,
       lastSyncedAt: new Date(),
+      newestSubmissionTime: newestSubTime,
+      oldestSubmissionTime: oldestSubTime,
     },
   });
+
+  const message = hasGap
+    ? `Quick-synced ${newSaved} recent solve${newSaved === 1 ? "" : "s"}. Some older solves may be skipped — run CodeRecall Extension for full sync.`
+    : newSaved > 0
+    ? `Quick-synced ${newSaved} new solve${newSaved === 1 ? "" : "s"}.`
+    : "Everything up to date with your recent solves.";
 
   return {
     success: true,
     mode: "public_recent",
     username,
+    hasGap,
+    message,
     stats: {
       isInitialSyncComplete: false,
       pagesFetched: 1,
