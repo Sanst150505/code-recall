@@ -7,7 +7,8 @@ async function main() {
   console.log(" CodeRecall: Historical Analytics & Revision Engine Test");
   console.log("===============================================================\n");
 
-  const summary = await calculateHistoricalAnalytics();
+  const targetUser = process.argv[2] || "demo";
+  const summary = await calculateHistoricalAnalytics(targetUser);
 
   console.log("--- 1. Overall Profile Summary ---");
   console.log(`Username:                         ${summary.username}`);

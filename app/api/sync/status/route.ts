@@ -33,19 +33,14 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const [totalSubmissions, totalProblems, acceptedCount, allUsers] = await Promise.all([
+    const [totalSubmissions, totalProblems, acceptedCount] = await Promise.all([
       prisma.submission.count({ where: { userId: user.id } }),
       prisma.problem.count(),
       prisma.submission.count({ where: { userId: user.id, status: "Accepted" } }),
-      prisma.user.findMany({
-        select: { id: true, username: true, lastSyncedAt: true },
-        orderBy: { lastSyncedAt: "desc" },
-      }),
     ]);
 
     return NextResponse.json({
       hasUser: true,
-      allUsers,
       user: {
         id: user.id,
         username: user.username,

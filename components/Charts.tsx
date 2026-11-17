@@ -184,30 +184,3 @@ export function TopTopicsBarChart({ data }: { data: TopicBarItem[] }) {
     </div>
   );
 }
-
-// 4. Rolling Windows Activity Chart
-interface WindowsChartItem {
-  window: string;
-  solved: number;
-  attempts: number;
-}
-
-export function RollingWindowsBarChart({ data }: { data: WindowsChartItem[] }) {
-  return (
-    <div className="h-64 w-full">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-          <XAxis dataKey="window" stroke="#94a3b8" fontSize={11} tickLine={false} />
-          <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-          <Tooltip
-            contentStyle={{ backgroundColor: "#0f172a", borderRadius: "8px", border: "none", color: "#fff", fontSize: "12px" }}
-          />
-          <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "8px" }} />
-          <Bar dataKey="solved" name="Problems Solved" fill="#06b6d4" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="attempts" name="Submission Attempts" fill="#818cf8" radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
