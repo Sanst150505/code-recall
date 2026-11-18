@@ -36,7 +36,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
         lastSyncedAt={lastSyncedAt}
       />
 
-      <main className="p-6 sm:p-8 max-w-6xl mx-auto w-full">
+      <main className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full">
         <Suspense
           fallback={
             <div className="p-10 text-center text-xs text-slate-500 bg-white rounded-2xl border border-slate-200">

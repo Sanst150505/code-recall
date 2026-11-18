@@ -50,9 +50,9 @@ export function RevisionQueueView({
   return (
     <div className="space-y-6">
       {/* Top Filter and Search Control Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
         {/* Segmented Queue Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto pb-1 lg:pb-0 scrollbar-none text-xs font-medium">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none text-xs font-medium -mx-1 px-1">
           <button
             onClick={() => setActiveTab("all")}
             className={`px-3 py-1.5 rounded-xl transition cursor-pointer flex items-center gap-1.5 shrink-0 ${

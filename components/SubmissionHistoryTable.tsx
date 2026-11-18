@@ -157,7 +157,7 @@ export function SubmissionHistoryTable() {
     <div className="space-y-5">
       {/* Search and Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between p-4 bg-white rounded-2xl border border-slate-200 shadow-xs">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 max-w-full sm:max-w-md">
           <input
             type="text"
             placeholder="Search problem title or slug..."
@@ -172,14 +172,14 @@ export function SubmissionHistoryTable() {
 
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Status Filter */}
-          <div className="flex items-center gap-1.5 text-xs">
+          <div className="flex items-center gap-1.5 text-xs flex-1 sm:flex-none">
             <select
               value={status}
               onChange={(e) => {
                 setStatus(e.target.value);
                 setPage(1);
               }}
-              className="py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
+              className="w-full sm:w-auto py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
             >
               <option value="All">All Verdicts</option>
               <option value="Accepted">Accepted Only</option>
@@ -190,14 +190,14 @@ export function SubmissionHistoryTable() {
           </div>
 
           {/* Difficulty Filter */}
-          <div className="flex items-center gap-1.5 text-xs">
+          <div className="flex items-center gap-1.5 text-xs flex-1 sm:flex-none">
             <select
               value={difficulty}
               onChange={(e) => {
                 setDifficulty(e.target.value);
                 setPage(1);
               }}
-              className="py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
+              className="w-full sm:w-auto py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
             >
               <option value="All">All Difficulties</option>
               <option value="Easy">Easy</option>
@@ -224,7 +224,7 @@ export function SubmissionHistoryTable() {
       </div>
 
       {/* Pagination Status Bar */}
-      <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-slate-500 px-1">
         <span>
           Showing{" "}
           <strong className="text-slate-800">
@@ -259,7 +259,7 @@ export function SubmissionHistoryTable() {
       {/* Submissions Table */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="w-full text-left border-collapse text-xs min-w-[760px]">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                 <th className="py-3.5 px-5">Problem Title</th>

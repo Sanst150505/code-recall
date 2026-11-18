@@ -65,7 +65,7 @@ export function DifficultyDonutChart({ easy, medium, hard }: DifficultyChartProp
         <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Solved</span>
       </div>
 
-      <div className="flex items-center justify-center gap-4 mt-2">
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-2">
         {data.map((item) => (
           <div key={item.name} className="flex items-center gap-1.5 text-xs text-slate-600">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></span>
@@ -171,7 +171,7 @@ export function TopTopicsBarChart({ data }: { data: TopicBarItem[] }) {
             stroke="#64748b"
             fontSize={11}
             tickLine={false}
-            width={135}
+            width={110}
           />
           <Tooltip
             contentStyle={{ backgroundColor: "#0f172a", borderRadius: "8px", border: "none", color: "#fff", fontSize: "12px" }}

@@ -49,7 +49,7 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
     <div className="space-y-5">
       {/* Search and Filters Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between p-4 bg-white rounded-2xl border border-slate-200 shadow-xs">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 max-w-full sm:max-w-md">
           <input
             type="text"
             placeholder="Search active DSA topics (e.g., Dynamic Programming, Graph)..."
@@ -59,12 +59,12 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
           />
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <div className="flex items-center gap-1.5 text-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs w-full sm:w-auto">
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
+              className="w-full sm:w-auto py-2 sm:py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
             >
               <option value="ALL">All Categories</option>
               <option value="CRITICAL_REVISION">Critical Revision</option>
@@ -74,11 +74,11 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
             </select>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs">
+          <div className="flex items-center gap-1.5 text-xs w-full sm:w-auto">
             <select
               value={sortBy}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSortBy(e.target.value as "priority" | "solved" | "struggle" | "recency" | "alphabetical")}
-              className="py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
+              className="w-full sm:w-auto py-2 sm:py-1.5 px-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-700 focus:outline-hidden"
             >
               <option value="priority">Priority Score (High to Low)</option>
               <option value="solved">Unique Solved (High to Low)</option>
@@ -91,16 +91,16 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
       </div>
 
       {/* Topics Count Indicator */}
-      <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-slate-500 px-1">
         <span>
           Showing <strong className="text-slate-800">{filteredTopics.length}</strong> of{" "}
           <strong className="text-slate-800">{initialTopics.length}</strong> practiced topics{" "}
-          <span className="text-slate-600">(from 88 supported LeetCode DSA categories)</span>
+          <span className="text-slate-600">(from 88 supported categories)</span>
         </span>
         {search && (
           <button
             onClick={() => setSearch("")}
-            className="text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer"
+            className="text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer self-start sm:self-auto"
           >
             Clear search
           </button>
@@ -110,7 +110,7 @@ export function TopicsTable({ initialTopics }: TopicsTableProps) {
       {/* Topics Table */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="w-full text-left border-collapse text-xs min-w-[760px]">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 px-5">Topic</th>

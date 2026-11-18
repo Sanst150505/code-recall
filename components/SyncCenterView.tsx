@@ -81,7 +81,7 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
     <div className="space-y-6">
       {/* Active Account & Sync Status */}
       {activeUsername ? (
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
             <div>
               <div className="flex items-center gap-2">
@@ -160,7 +160,7 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
           </div>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs text-center py-10">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs text-center py-8 sm:py-10">
           <h2 className="text-sm font-bold text-slate-900">No Account Connected</h2>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
             Use the CodeRecall Chrome extension while logged into LeetCode to sync your historical submissions.
@@ -169,7 +169,7 @@ export function SyncCenterView({ initialData }: { initialData: SyncStatusData })
       )}
 
       {/* Chrome Extension Status & Quick Setup */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+      <div className="p-4 sm:p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
         <div className="pb-4 border-b border-slate-100">
           <h3 className="font-bold text-sm text-slate-900">Chrome Extension</h3>
           <p className="text-xs text-slate-500">Sync directly from your browser session</p>

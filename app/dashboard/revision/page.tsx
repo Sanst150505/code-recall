@@ -21,8 +21,8 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
           username={summary.username}
           lastSyncedAt={null}
         />
-        <main className="p-6 sm:p-8 max-w-4xl mx-auto w-full">
-          <div className="p-10 rounded-2xl bg-white border border-slate-200 text-center space-y-3">
+        <main className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto w-full">
+          <div className="p-6 sm:p-10 rounded-2xl bg-white border border-slate-200 text-center space-y-3">
             <h3 className="text-base font-bold text-slate-900">
               {usernameParam ? `No submissions found for "${usernameParam}"` : "No profile selected"}
             </h3>
@@ -59,7 +59,7 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
         lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />
 
-      <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">
+      <main className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-6xl mx-auto w-full">
         {/* Action Overview Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>

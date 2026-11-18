@@ -149,7 +149,7 @@ export function RevisionCard({
 
   return (
     <div
-      className={`p-5 rounded-2xl bg-white border transition-all flex flex-col justify-between relative ${
+      className={`p-4 sm:p-5 rounded-2xl bg-white border transition-all flex flex-col justify-between relative ${
         isFeatured
           ? "border-indigo-300 ring-1 ring-indigo-500/20 shadow-md bg-gradient-to-br from-white via-indigo-50/15 to-white"
           : "border-slate-200/90 shadow-2xs hover:shadow-sm"
@@ -157,7 +157,7 @@ export function RevisionCard({
     >
       <div>
         {/* Top Status & Category Bar */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="flex items-center gap-1.5">
             {rank !== undefined && (
               <span
@@ -264,18 +264,18 @@ export function RevisionCard({
 
         {/* Previously Solved Problems for this Topic */}
         {item.solvedProblems && item.solvedProblems.length > 0 && !isDrawerOpen && (
-          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-            <span className="text-[11px] font-medium text-slate-500">
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <span className="text-[11px] font-medium text-slate-500 shrink-0">
               {item.solvedProblems.length} available to review:
             </span>
-            <div className="flex items-center gap-1.5 truncate max-w-[70%]">
+            <div className="flex flex-wrap items-center gap-1.5 max-w-full">
               {item.solvedProblems.slice(0, 2).map((p) => (
                 <a
                   key={p.id}
                   href={`https://leetcode.com/problems/${p.slug}/`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="truncate max-w-[130px] px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition border border-slate-200"
+                  className="truncate max-w-[150px] sm:max-w-[130px] px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition border border-slate-200"
                   title={`Open ${p.title} on LeetCode`}
                 >
                   {p.title}
@@ -448,8 +448,8 @@ export function RevisionCard({
       </div>
 
       {/* Card Footer Actions */}
-      <div className="mt-4 pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
-        <div className="flex items-center gap-2 text-slate-600 text-[11px]">
+      <div className="mt-4 pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+        <div className="flex items-center gap-2 text-slate-600 text-[11px] flex-wrap">
           <span
             className="cursor-help underline decoration-dotted"
             title="Decay Factor: Higher as days since last practice increases (max 100)"

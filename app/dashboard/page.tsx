@@ -25,19 +25,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           username=""
         />
 
-        <main className="p-6 sm:p-8 space-y-8 max-w-4xl mx-auto w-full">
+        <main className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-4xl mx-auto w-full">
           {/* Welcome Hero */}
-          <div className="p-8 rounded-2xl bg-slate-900 text-white border border-slate-800">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <div className="p-5 sm:p-8 rounded-2xl bg-slate-900 text-white border border-slate-800">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
               Track your LeetCode retention, cognitive decay & revision queue.
             </h2>
-            <p className="text-sm text-slate-300 mt-3 leading-relaxed max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed max-w-2xl">
               Sync your LeetCode account using the CodeRecall Chrome extension, or explore our live demo profile to inspect the retention heuristics immediately.
             </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-5 sm:mt-6 flex flex-wrap items-center gap-3">
               <Link
                 href="/dashboard?user=demo"
-                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-white text-slate-950 hover:bg-slate-100 transition inline-block"
+                className="px-4 sm:px-5 py-2.5 rounded-xl text-xs font-semibold bg-white text-slate-950 hover:bg-slate-100 transition inline-block"
               >
                 Explore Live Demo Profile
               </Link>
@@ -94,9 +94,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           lastSyncedAt={null}
         />
 
-        <main className="p-6 sm:p-8 max-w-4xl mx-auto w-full">
-          <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center space-y-4">
-            <h2 className="text-lg font-bold text-slate-900">
+        <main className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto w-full">
+          <div className="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 text-center space-y-4">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900">
               No Submissions Synced for &ldquo;{usernameParam}&rdquo;
             </h2>
             <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
@@ -162,11 +162,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />
 
-      <main className="p-6 sm:p-8 space-y-8 max-w-6xl mx-auto w-full">
+      <main className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-6xl mx-auto w-full">
         {/* Short Greeting & Action Cue */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
               {summary.username === "demo" ? "Performance Dashboard" : `Welcome back, ${summary.username}`}
             </h2>
             <p className="text-xs text-slate-600 mt-0.5">
@@ -176,14 +176,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-start sm:self-auto">
             <Link
               href={
                 usernameParam
                   ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
                   : "/dashboard/revision"
               }
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 transition shadow-2xs"
+              className="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800 transition shadow-2xs"
             >
               Open Full Queue ({totalNeedsRevision})
             </Link>
@@ -267,7 +267,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         {/* Revision Recommendations Section */}
         {summary.topRevisionCandidates.length > 0 && (
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <h3 className="text-base font-bold text-slate-900 tracking-tight">
                   Priority Revision Queue
@@ -282,7 +282,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     ? `/dashboard/revision?user=${encodeURIComponent(usernameParam)}`
                     : "/dashboard/revision"
                 }
-                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition"
+                className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition self-start sm:self-auto"
               >
                 View full queue ({totalNeedsRevision}) &rarr;
               </Link>
@@ -317,7 +317,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         )}
 
         {/* Compact Practice Activity Chart */}
-        <section className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+        <section className="p-4 sm:p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-bold text-sm text-slate-900">Practice Activity</h3>
