@@ -54,7 +54,7 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
     <>
       <Header
         title="Revise Today"
-        description="Retain core problem-solving patterns, approaches, and concepts organized by recency decay, struggle friction, and exposure deficits."
+        description="Prioritized revision to retain core problem-solving patterns, approaches, and concepts."
         username={summary.username}
         lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />

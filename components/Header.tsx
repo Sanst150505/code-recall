@@ -89,7 +89,7 @@ export function Header({
 
   return (
     <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
-      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 mr-4">
         {/* Mobile menu toggle hamburger */}
         <button
           onClick={toggle}
@@ -101,10 +101,13 @@ export function Header({
           </svg>
         </button>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="text-base sm:text-lg font-bold text-slate-900 truncate">{title}</h1>
           {description && (
-            <p className="text-xs text-slate-500 mt-0.5 hidden sm:block truncate max-w-xs sm:max-w-md lg:max-w-xl">
+            <p
+              className="text-xs text-slate-500 mt-0.5 hidden sm:block truncate"
+              title={description}
+            >
               {description}
             </p>
           )}

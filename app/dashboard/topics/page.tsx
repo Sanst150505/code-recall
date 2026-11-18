@@ -21,7 +21,7 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
       <>
         <Header
           title="My Progress"
-          description="Detailed competency matrix and difficulty breakdown across 88 topics."
+          description="Competency matrix and difficulty breakdown across 88 supported DSA topics."
           username={summary.username}
           lastSyncedAt={null}
         />
@@ -61,7 +61,7 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
     <>
       <Header
         title="My Progress"
-        description="Detailed competency matrix and difficulty breakdown across practiced topics (from 88 supported DSA categories)."
+        description="Competency matrix and difficulty breakdown across 88 supported DSA topics."
         username={summary.username}
         lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />
