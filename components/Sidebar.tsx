@@ -120,7 +120,6 @@ export function Sidebar({ username = "" }: SidebarProps) {
               className="block p-2 rounded-lg bg-indigo-600/20 border border-indigo-500/40 hover:bg-indigo-600/30 transition text-center"
             >
               <p className="text-xs font-semibold text-white">Live Demo Profile</p>
-              <span className="text-[10px] text-indigo-300 font-medium block">Explore Sample Journey</span>
             </Link>
             <Link
               href="/dashboard/sync"
