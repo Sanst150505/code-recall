@@ -23,7 +23,7 @@ export function RevisionCard({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [selectedProblemSlug, setSelectedProblemSlug] = useState<string>(
-    item.solvedProblems[0]?.slug || ""
+    item.suggestedProblems?.[0]?.slug || item.solvedProblems?.[0]?.slug || ""
   );
   const [verificationResult, setVerificationResult] = useState<{
     verified: boolean;
@@ -263,30 +263,99 @@ export function RevisionCard({
         </div>
 
         {/* Previously Solved Problems for this Topic */}
-        {item.solvedProblems && item.solvedProblems.length > 0 && !isDrawerOpen && (
-          <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-            <span className="text-[11px] font-medium text-slate-500 shrink-0">
-              {item.solvedProblems.length} available to review:
+        {!isDrawerOpen && (
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
+            <span className="text-[11px] font-semibold text-slate-700 shrink-0">
+              Problems you&apos;ve done ({item.solvedProblems?.length || 0}):
             </span>
-            <div className="flex flex-wrap items-center gap-1.5 max-w-full">
-              {item.solvedProblems.slice(0, 2).map((p) => (
-                <a
-                  key={p.id}
-                  href={`https://leetcode.com/problems/${p.slug}/`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="truncate max-w-[150px] sm:max-w-[130px] px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 transition border border-slate-200"
-                  title={`Open ${p.title} on LeetCode`}
-                >
-                  {p.title}
-                </a>
-              ))}
-              {item.solvedProblems.length > 2 && (
-                <span className="text-[10px] text-slate-500 font-medium shrink-0">
-                  +{item.solvedProblems.length - 2} more
+            {item.solvedProblems && item.solvedProblems.length > 0 ? (
+              <div className="flex flex-wrap items-center gap-1.5 max-w-full">
+                {item.solvedProblems.slice(0, 3).map((p) => (
+                  <a
+                    key={p.id}
+                    href={`https://leetcode.com/problems/${p.slug}/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="truncate max-w-[150px] sm:max-w-[130px] px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200"
+                    title={`Open ${p.title} on LeetCode`}
+                  >
+                    {p.title}
+                  </a>
+                ))}
+                {item.solvedProblems.length > 3 && (
+                  <span className="text-[10px] text-slate-500 font-medium shrink-0">
+                    +{item.solvedProblems.length - 3} more
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span className="text-[11px] text-slate-400 italic">No previous solves recorded</span>
+            )}
+          </div>
+        )}
+
+        {/* Suggested Practice (3-5 Problems) - Essential for Insufficient Exposure & Revision */}
+        {!isDrawerOpen && item.suggestedProblems && item.suggestedProblems.length > 0 && (
+          <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[11px] font-semibold text-indigo-950 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+                <span>
+                  {item.category === "INSUFFICIENT_EXPOSURE"
+                    ? "Recommended Practice (Build Exposure):"
+                    : "Suggested Practice (3-5 Problems):"}
                 </span>
-              )}
+              </span>
+              <span className="text-[10px] text-slate-500 font-medium hidden sm:inline">
+                Click to solve on LeetCode
+              </span>
             </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              {item.suggestedProblems.slice(0, 5).map((prob) => {
+                const diffBadge =
+                  prob.difficulty === "Easy"
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                    : prob.difficulty === "Medium"
+                    ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                    : "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100";
+
+                return (
+                  <a
+                    key={prob.slug}
+                    href={`https://leetcode.com/problems/${prob.slug}/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`px-2 py-0.5 rounded-md text-[11px] font-medium transition border flex items-center gap-1 ${diffBadge}`}
+                    title={prob.reason || `Practice ${prob.title} on LeetCode`}
+                  >
+                    <span>{prob.title}</span>
+                    <span className="text-[9px] font-bold opacity-75">({prob.difficulty[0]})</span>
+                    <span className="text-[9px]">↗</span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Related Topics Suggested for Practice */}
+        {!isDrawerOpen && item.relatedTopics && item.relatedTopics.length > 0 && (
+          <div className="mt-2 pt-1.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5 text-xs">
+            <span className="text-[10.5px] font-semibold text-slate-600 shrink-0">Related Topics:</span>
+            {item.relatedTopics.map((relTopic) => (
+              <Link
+                key={relTopic}
+                href={
+                  username
+                    ? `/dashboard/topics?user=${encodeURIComponent(username)}`
+                    : `/dashboard/topics`
+                }
+                className="text-[10px] px-2 py-0.5 rounded-md bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200 transition font-medium"
+              >
+                {relTopic}
+              </Link>
+            ))}
           </div>
         )}
 
@@ -301,39 +370,87 @@ export function RevisionCard({
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 mt-1">
-                Select a problem, solve it on LeetCode, and verify your Accepted verdict to update your retention schedule:
+                Select a suggested or previously solved problem, solve it on LeetCode, and verify your Accepted verdict:
               </p>
             </div>
 
-            {/* Problem selector */}
-            {item.solvedProblems.length > 0 && (
-              <div className="space-y-1.5">
-                <label className="text-[11px] text-slate-400 font-medium">1. Select Target Problem:</label>
-                <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
-                  {item.solvedProblems.map((prob) => {
-                    const isSelected = selectedProblemSlug === prob.slug;
-                    return (
-                      <button
-                        key={prob.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedProblemSlug(prob.slug);
-                          setVerificationResult(null);
-                        }}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 border ${
-                          isSelected
-                            ? "bg-indigo-600 text-white border-indigo-400 shadow-xs"
-                            : "bg-slate-800/80 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
-                        }`}
-                      >
-                        <span className="truncate max-w-[140px]">{prob.title}</span>
-                        <span className="text-[9px] opacity-75 font-semibold">({prob.difficulty[0]})</span>
-                      </button>
-                    );
-                  })}
+            {/* Problem selector (Both Suggested and Previously Done) */}
+            <div className="space-y-2.5">
+              {item.suggestedProblems && item.suggestedProblems.length > 0 && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-semibold text-indigo-300">
+                      Suggested Practice Problems to Solve:
+                    </span>
+                    <span className="text-[10px] text-slate-400">Curated for {item.topic}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto pr-1">
+                    {item.suggestedProblems.map((prob) => {
+                      const isSelected = selectedProblemSlug === prob.slug;
+                      return (
+                        <button
+                          key={prob.slug}
+                          type="button"
+                          onClick={() => {
+                            setSelectedProblemSlug(prob.slug);
+                            setVerificationResult(null);
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 border ${
+                            isSelected
+                              ? "bg-indigo-600 text-white border-indigo-400 shadow-xs"
+                              : "bg-slate-800/90 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white"
+                          }`}
+                        >
+                          <span className="truncate max-w-[150px]">{prob.title}</span>
+                          <span
+                            className={`text-[9px] px-1 py-0.2 rounded font-semibold ${
+                              prob.difficulty === "Easy"
+                                ? "bg-emerald-950 text-emerald-300"
+                                : prob.difficulty === "Medium"
+                                ? "bg-amber-950 text-amber-300"
+                                : "bg-rose-950 text-rose-300"
+                            }`}
+                          >
+                            {prob.difficulty[0]}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {item.solvedProblems && item.solvedProblems.length > 0 && (
+                <div className="space-y-1.5 pt-1.5 border-t border-slate-800/80">
+                  <span className="font-semibold text-slate-400 text-[11px] block">
+                    Or Re-verify Previously Solved Problem:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                    {item.solvedProblems.map((prob) => {
+                      const isSelected = selectedProblemSlug === prob.slug;
+                      return (
+                        <button
+                          key={prob.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedProblemSlug(prob.slug);
+                            setVerificationResult(null);
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 border ${
+                            isSelected
+                              ? "bg-indigo-600 text-white border-indigo-400 shadow-xs"
+                              : "bg-slate-800/60 text-slate-300 border-slate-700/80 hover:bg-slate-800 hover:text-white"
+                          }`}
+                        >
+                          <span className="truncate max-w-[140px]">{prob.title}</span>
+                          <span className="text-[9px] opacity-75 font-semibold">({prob.difficulty[0]})</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Target problem action bar */}
             {selectedProblemSlug && (

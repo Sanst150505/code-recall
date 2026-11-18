@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getTopicCuration } from "@/lib/topic-curation";
 
 export type RecommendationCategory =
   | "CRITICAL_REVISION"
@@ -17,6 +18,14 @@ export interface SolvedProblemMeta {
   title: string;
   difficulty: string;
   lastSubmittedAt: string;
+}
+
+export interface SuggestedProblemMeta {
+  slug: string;
+  title: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  reason?: string;
+  isAlreadySolved?: boolean;
 }
 
 export interface TopicAnalytics {
@@ -52,6 +61,8 @@ export interface TopicAnalytics {
   explanation: string;
   recommendedAction: string;
   solvedProblems: SolvedProblemMeta[];
+  suggestedProblems: SuggestedProblemMeta[];
+  relatedTopics: string[];
   reassessmentCount: number;
   lastRevisedAt: string | null;
   lastOutcome: "INDEPENDENT" | "WITH_HINTS" | "COULD_NOT_SOLVE" | null;
@@ -462,6 +473,14 @@ export async function calculateHistoricalAnalytics(
       .filter(Boolean)
       .sort((a, b) => new Date(b.lastSubmittedAt).getTime() - new Date(a.lastSubmittedAt).getTime());
 
+    // Extract solved problem slugs for this topic to prioritize unsolved recommendations
+    const topicSolvedSlugs = new Set<string>();
+    for (const p of solvedProblems) {
+      if (p.slug) topicSolvedSlugs.add(p.slug.toLowerCase());
+    }
+
+    const curation = getTopicCuration(acc.topic, topicSolvedSlugs);
+
     analyticsList.push({
       topic: acc.topic,
       uniqueSolved,
@@ -502,6 +521,8 @@ export async function calculateHistoricalAnalytics(
       explanation,
       recommendedAction,
       solvedProblems,
+      suggestedProblems: curation.recommendedProblems,
+      relatedTopics: curation.relatedTopics,
       reassessmentCount: revInfo?.count ?? 0,
       lastRevisedAt: revInfo?.lastRevisedAt ?? null,
       lastOutcome: revInfo?.lastOutcome ?? null,
