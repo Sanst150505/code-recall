@@ -148,7 +148,7 @@ export function RevisionQueueView({
         <div className="relative w-full lg:w-64">
           <input
             type="text"
-            placeholder="Search revision queue..."
+            placeholder="Search topics, patterns, or concepts..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:outline-hidden transition"

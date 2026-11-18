@@ -91,7 +91,7 @@ export function Sidebar({ username = "" }: SidebarProps) {
           <div className="h-16 flex items-center px-5 border-b border-slate-800/80">
             <div>
               <span className="font-bold text-base tracking-tight text-white">CodeRecall</span>
-              <p className="text-[11px] text-slate-400">DSA Practice</p>
+              <p className="text-[11px] text-slate-400">DSA Revision & Retention</p>
             </div>
           </div>
 
@@ -191,7 +191,7 @@ export function Sidebar({ username = "" }: SidebarProps) {
           <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800/80">
             <div>
               <span className="font-bold text-base tracking-tight text-white">CodeRecall</span>
-              <p className="text-[11px] text-slate-400">DSA Practice</p>
+              <p className="text-[11px] text-slate-400">DSA Revision & Retention</p>
             </div>
             <button
               onClick={close}

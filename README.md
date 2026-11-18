@@ -1,6 +1,6 @@
 # CodeRecall
 
-A spaced-repetition revision priority engine that analyzes historical LeetCode activity to surface decaying concepts and recommend targeted practice.
+CodeRecall helps developers retain the problem-solving patterns, approaches, and concepts they learn while practicing DSA. It analyzes historical LeetCode activity to surface decaying concepts and recommend targeted reinforcement.
 
 ---
 

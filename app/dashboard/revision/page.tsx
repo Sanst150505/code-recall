@@ -54,7 +54,7 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
     <>
       <Header
         title="Revise Today"
-        description="Spaced-repetition queue organized by concept decay, attempt friction, and exposure deficits."
+        description="Retain core problem-solving patterns, approaches, and concepts organized by recency decay, struggle friction, and exposure deficits."
         username={summary.username}
         lastSyncedAt={summary.lastSyncedAt ?? summary.timeSpan.latestSubmission}
       />
@@ -67,7 +67,7 @@ export default async function RevisionPage({ searchParams }: RevisionPageProps) 
               Revision Queue
             </h2>
             <p className="text-xs text-slate-600 mt-0.5">
-              Spaced-repetition priority schedule. Practice target problems on LeetCode and verify your solves.
+              Targeted revision to retain key problem-solving patterns, approaches, and concepts. Practice on LeetCode and verify your solves.
             </p>
           </div>
 

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CodeRecall — DSA Skill Assessment & Revision Recommendation Engine",
-  description: "Assess retention, identify decaying algorithms, and track deep historical LeetCode submission data.",
+  title: "CodeRecall — DSA Revision & Concept Retention",
+  description: "CodeRecall helps developers retain the problem-solving patterns, approaches, and concepts they learn while practicing DSA.",
 };
 
 export default function RootLayout({

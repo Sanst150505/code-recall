@@ -21,7 +21,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         <ActiveUserSession />
         <Header
           title="CodeRecall"
-          description="Algorithmic retention tracking & spaced repetition for LeetCode."
+          description="Retain the problem-solving patterns, approaches, and concepts you learn while practicing DSA."
           username=""
         />
 
@@ -29,10 +29,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           {/* Welcome Hero */}
           <div className="p-5 sm:p-8 rounded-2xl bg-slate-900 text-white border border-slate-800">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
-              Track your LeetCode retention, cognitive decay & revision queue.
+              Retain problem-solving patterns, approaches, and concepts.
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed max-w-2xl">
-              Sync your LeetCode account using the CodeRecall Chrome extension, or explore our live demo profile to inspect the retention heuristics immediately.
+              CodeRecall helps developers retain the problem-solving patterns, approaches, and concepts they learn while practicing DSA. Sync your LeetCode account using the CodeRecall Chrome extension, or explore our live demo profile to inspect your retention heuristics immediately.
             </p>
             <div className="mt-5 sm:mt-6 flex flex-wrap items-center gap-3">
               <Link
@@ -171,8 +171,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </h2>
             <p className="text-xs text-slate-600 mt-0.5">
               {totalNeedsRevision > 0
-                ? `${totalNeedsRevision} DSA concepts flagged for spaced repetition review.`
-                : "All learned algorithmic patterns are currently fresh and well-maintained."}
+                ? `${totalNeedsRevision} DSA concepts & patterns flagged for revision.`
+                : "All learned algorithmic patterns and approaches are currently fresh and well-maintained."}
             </p>
           </div>
 
@@ -273,7 +273,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                   Priority Revision Queue
                 </h3>
                 <p className="text-xs text-slate-600">
-                  Calculated by retention decay, past friction, and exposure deficits.
+                  Focus on patterns and concepts needing revision based on recency decay, struggle friction, and exposure deficits.
                 </p>
               </div>
               <Link

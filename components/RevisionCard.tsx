@@ -515,7 +515,7 @@ export function RevisionCard({
             ) : verificationResult?.verified ? (
               <div className="space-y-1.5 pt-1 border-t border-slate-800">
                 <p className="text-[11px] text-slate-300">
-                  How was your recall during this solve? Select outcome to update your retention schedule:
+                  How was your recall of the core pattern and approach during this solve? Select outcome to update your retention status:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button
@@ -583,7 +583,7 @@ export function RevisionCard({
           <span>·</span>
           <span
             className="cursor-help underline decoration-dotted"
-            title="Friction Factor: Higher when attempt-to-solve ratio indicates repeated struggle"
+            title="Friction Factor: Higher when attempt-to-solve ratio indicates difficulty grasping the pattern before solve"
           >
             Friction: {item.frictionFactor}
           </span>
